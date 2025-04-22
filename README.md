@@ -61,14 +61,7 @@ tripeak-b2b/
 
 ### 安裝步驟
 
-1. 克隆專案存儲庫
-
-```bash
-git clone https://github.com/your-username/tripeak-b2b.git
-cd tripeak-b2b
-```
-
-2. 安裝並運行後端
+1. 安裝並運行後端
 
 ```bash
 cd backend
@@ -77,7 +70,7 @@ cp .env.example .env  # 複製環境變數配置檔並修改
 npm run dev
 ```
 
-3. 安裝並運行前端
+2. 安裝並運行前端
 
 ```bash
 cd ../frontend
@@ -108,14 +101,4 @@ npm run build
 
 詳細的部署指南請參閱 `docs/deployment.md`。
 
-## 開發貢獻指南
-
-1. Fork 專案存儲庫
-2. 創建功能分支 (`git checkout -b feature/amazing-feature`)
-3. 提交更改 (`git commit -m 'Add some amazing feature'`)
-4. 推送到分支 (`git push origin feature/amazing-feature`)
-5. 提交 Pull Request
-
-## 許可證
-
-© 2023 TRiPEAK. 版權所有。 
+© 2025 Paul Lee. 版權所有。 
