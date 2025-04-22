@@ -1,0 +1,373 @@
+const Product = require('../models/Product');
+const Category = require('../models/Category');
+const logger = require('../utils/logger');
+const path = require('path');
+const fs = require('fs');
+
+/**
+ * @desc    獲取所有產品
+ * @route   GET /api/products
+ * @access  Public
+ */
+exports.getProducts = async (req, res) => {
+  try {
+    const filter = {};
+    
+    // 分類篩選
+    if (req.query.category) {
+      filter.category = req.query.category;
+    }
+
+    // 活躍狀態篩選（管理員可以查看所有產品，經銷商只能查看活躍產品）
+    if (req.user && req.user.role === 'admin') {
+      if (req.query.isActive) {
+        filter.isActive = req.query.isActive === 'true';
+      }
+    } else {
+      filter.isActive = true;
+    }
+
+    // 搜尋關鍵字
+    if (req.query.keyword) {
+      filter.$or = [
+        { name: { $regex: req.query.keyword, $options: 'i' } },
+        { description: { $regex: req.query.keyword, $options: 'i' } },
+        { sku: { $regex: req.query.keyword, $options: 'i' } }
+      ];
+    }
+
+    // 分頁設置
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10) || 20;
+    const skip = (page - 1) * limit;
+
+    // 排序設置
+    let sort = {};
+    switch (req.query.sort) {
+      case 'newest':
+        sort = { createdAt: -1 };
+        break;
+      case 'price-low':
+        sort = { price: 1 };
+        break;
+      case 'price-high':
+        sort = { price: -1 };
+        break;
+      case 'name-asc':
+        sort = { name: 1 };
+        break;
+      case 'name-desc':
+        sort = { name: -1 };
+        break;
+      default:
+        sort = { displayOrder: 1, name: 1 };
+    }
+
+    // 執行查詢
+    const products = await Product.find(filter)
+      .populate('category', 'name')
+      .sort(sort)
+      .skip(skip)
+      .limit(limit);
+
+    // 獲取總數
+    const total = await Product.countDocuments(filter);
+
+    res.status(200).json({
+      success: true,
+      count: products.length,
+      pagination: {
+        total,
+        page,
+        limit,
+        pages: Math.ceil(total / limit)
+      },
+      data: products
+    });
+  } catch (err) {
+    logger.error(`獲取產品列表失敗: ${err.message}`);
+    res.status(500).json({
+      success: false,
+      error: '獲取產品列表失敗'
+    });
+  }
+};
+
+/**
+ * @desc    獲取單個產品
+ * @route   GET /api/products/:id
+ * @access  Public
+ */
+exports.getProduct = async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id).populate('category', 'name');
+
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        error: '產品不存在'
+      });
+    }
+
+    // 非管理員只能查看激活的產品
+    if (!product.isActive && (!req.user || req.user.role !== 'admin')) {
+      return res.status(404).json({
+        success: false,
+        error: '產品不存在'
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: product
+    });
+  } catch (err) {
+    logger.error(`獲取產品詳情失敗: ${err.message}`);
+    res.status(500).json({
+      success: false,
+      error: '獲取產品詳情失敗'
+    });
+  }
+};
+
+/**
+ * @desc    創建產品
+ * @route   POST /api/products
+ * @access  Private/Admin
+ */
+exports.createProduct = async (req, res) => {
+  try {
+    const { 
+      name, 
+      description, 
+      sku, 
+      price, 
+      stockQuantity, 
+      category: categoryId, 
+      isActive, 
+      displayOrder,
+      unit
+    } = req.body;
+
+    // 檢查分類是否存在
+    const category = await Category.findById(categoryId);
+    if (!category) {
+      return res.status(400).json({
+        success: false,
+        error: '分類不存在'
+      });
+    }
+
+    // 創建產品
+    const product = await Product.create({
+      name,
+      description,
+      sku,
+      price,
+      stockQuantity: stockQuantity || 0,
+      category: categoryId,
+      isActive: isActive !== undefined ? isActive : true,
+      displayOrder: displayOrder || 0,
+      unit: unit || '件'
+    });
+
+    res.status(201).json({
+      success: true,
+      data: product
+    });
+  } catch (err) {
+    logger.error(`創建產品失敗: ${err.message}`);
+    res.status(500).json({
+      success: false,
+      error: '創建產品失敗'
+    });
+  }
+};
+
+/**
+ * @desc    更新產品
+ * @route   PUT /api/products/:id
+ * @access  Private/Admin
+ */
+exports.updateProduct = async (req, res) => {
+  try {
+    const {
+      name,
+      description,
+      sku,
+      price,
+      stockQuantity,
+      category: categoryId,
+      isActive,
+      displayOrder,
+      unit
+    } = req.body;
+
+    const fieldsToUpdate = {
+      name,
+      description,
+      sku,
+      price,
+      stockQuantity,
+      category: categoryId,
+      isActive,
+      displayOrder,
+      unit
+    };
+
+    // 過濾掉未提供的欄位
+    Object.keys(fieldsToUpdate).forEach(key => {
+      if (fieldsToUpdate[key] === undefined) {
+        delete fieldsToUpdate[key];
+      }
+    });
+
+    // 如果有更新分類，檢查分類是否存在
+    if (categoryId) {
+      const category = await Category.findById(categoryId);
+      if (!category) {
+        return res.status(400).json({
+          success: false,
+          error: '分類不存在'
+        });
+      }
+    }
+
+    // 更新產品
+    const product = await Product.findByIdAndUpdate(req.params.id, fieldsToUpdate, {
+      new: true,
+      runValidators: true
+    }).populate('category', 'name');
+
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        error: '產品不存在'
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: product
+    });
+  } catch (err) {
+    logger.error(`更新產品失敗: ${err.message}`);
+    res.status(500).json({
+      success: false,
+      error: '更新產品失敗'
+    });
+  }
+};
+
+/**
+ * @desc    刪除產品
+ * @route   DELETE /api/products/:id
+ * @access  Private/Admin
+ */
+exports.deleteProduct = async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        error: '產品不存在'
+      });
+    }
+
+    await product.deleteOne();
+
+    res.status(200).json({
+      success: true,
+      data: {}
+    });
+  } catch (err) {
+    logger.error(`刪除產品失敗: ${err.message}`);
+    res.status(500).json({
+      success: false,
+      error: '刪除產品失敗'
+    });
+  }
+};
+
+/**
+ * @desc    上傳產品圖片
+ * @route   PUT /api/products/:id/upload
+ * @access  Private/Admin
+ */
+exports.uploadProductImage = async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        error: '產品不存在'
+      });
+    }
+
+    if (!req.files || !req.files.image) {
+      return res.status(400).json({
+        success: false,
+        error: '請上傳圖片'
+      });
+    }
+
+    const file = req.files.image;
+
+    // 確保文件是圖片
+    if (!file.mimetype.startsWith('image')) {
+      return res.status(400).json({
+        success: false,
+        error: '請上傳圖片格式文件'
+      });
+    }
+
+    // 檢查文件大小
+    if (file.size > process.env.MAX_FILE_SIZE) {
+      return res.status(400).json({
+        success: false,
+        error: `圖片大小不能超過 ${process.env.MAX_FILE_SIZE / 1000000} MB`
+      });
+    }
+
+    // 創建自定義文件名
+    const filename = `product_${product._id}${path.parse(file.name).ext}`;
+    
+    // 移動文件到上傳路徑
+    file.mv(`${process.env.FILE_UPLOAD_PATH}/products/${filename}`, async err => {
+      if (err) {
+        logger.error(`圖片上傳失敗: ${err.message}`);
+        return res.status(500).json({
+          success: false,
+          error: '圖片上傳失敗'
+        });
+      }
+
+      // 如果產品已有圖片，刪除舊圖片
+      if (product.imageUrl !== 'no-image.jpg') {
+        try {
+          fs.unlinkSync(`${process.env.FILE_UPLOAD_PATH}/products/${product.imageUrl}`);
+        } catch (unlinkErr) {
+          logger.error(`刪除舊圖片失敗: ${unlinkErr.message}`);
+        }
+      }
+
+      // 更新產品圖片路徑
+      await Product.findByIdAndUpdate(req.params.id, { imageUrl: filename });
+
+      res.status(200).json({
+        success: true,
+        data: {
+          filename
+        }
+      });
+    });
+  } catch (err) {
+    logger.error(`上傳產品圖片失敗: ${err.message}`);
+    res.status(500).json({
+      success: false,
+      error: '上傳產品圖片失敗'
+    });
+  }
+};
