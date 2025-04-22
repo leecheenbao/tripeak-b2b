@@ -41,7 +41,7 @@ app.get('/', (req, res) => {
 app.use(errorHandler);
 
 // 啟動服務器
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 8080;
 const server = app.listen(PORT, () => {
   logger.info(`服務器在 ${process.env.NODE_ENV} 模式下運行於 http://localhost:${PORT}`);
 });

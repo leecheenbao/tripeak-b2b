@@ -31,7 +31,7 @@
                 </v-alert>
                 
                 <v-text-field
-                  v-model="name"
+                  v-model="companyName"
                   :rules="[rules.required]"
                   label="公司名稱"
                   prepend-inner-icon="mdi-domain"
@@ -40,7 +40,7 @@
                 ></v-text-field>
                 
                 <v-text-field
-                  v-model="contactName"
+                  v-model="name"
                   :rules="[rules.required]"
                   label="聯絡人姓名"
                   prepend-inner-icon="mdi-account"
@@ -191,7 +191,7 @@ const handleRegister = async () => {
     // 準備註冊數據
     const registerData = {
       name: name.value,
-      contactName: contactName.value,
+      companyName: contactName.value,
       email: email.value,
       phone: phone.value,
       password: password.value,

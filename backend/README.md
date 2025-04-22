@@ -1,141 +1,135 @@
-# TRiPEAK B2B 經銷商下單平台 - 後端
+# TRiPEAK B2B 經銷商下單平台
 
-本專案是 TRiPEAK B2B 經銷商下單平台的後端 API 服務。為經銷商提供產品訂購和訂單管理功能，同時為管理員提供完整的後台管理系統。
-
-## 功能特點
-
-- **用戶管理**: 管理員可以添加和管理經銷商帳戶
-- **產品管理**: 上架、編輯、分類、上下架產品
-- **訂單管理**: 完整的訂單流程和狀態追蹤
-- **LINE 通知**: 整合 LINE 通知功能，即時通知訂單狀態
-- **報表導出**: 提供訂單資料 Excel 導出功能
+TRiPEAK B2B 是一個專為自行車零件製造商 TRiPEAK 設計的經銷商訂購平台，允許經銷商瀏覽產品目錄、下訂單，以及追蹤訂單狀態。
 
 ## 技術架構
 
-- Node.js & Express.js
-- MongoDB & Mongoose
-- JSON Web Token (JWT) 驗證
-- LINE Bot SDK 整合
-- 基於 REST API 設計
+- 前端：Vue 3 + Vuetify 3 + Pinia
+- 後端：Node.js + Express
+- 數據庫：MongoDB
+- 容器化：Docker & Docker Compose
 
-## 安裝指南
+## 安裝與設置
 
-### 前置需求
+### 前置條件
 
-- Node.js (版本 > 14.x)
-- MongoDB 資料庫
-- LINE 開發者帳號（用於 LINE Bot 整合）
+- Node.js >= 16.x
+- Docker 與 Docker Compose
+- Git
 
-### 安裝步驟
+### 使用 Docker Compose 啟動 MongoDB
 
-1. 複製專案
+1. 在項目根目錄中運行 Docker Compose 來啟動 MongoDB 和 Mongo Express：
 
 ```bash
-git clone https://your-repository-url/tripeak-b2b.git
+docker-compose up -d
+```
+
+這將啟動以下服務：
+- MongoDB 數據庫 (端口 27017)
+- Mongo Express 管理界面 (端口 8081)
+
+2. 訪問 MongoDB 管理界面：
+   - URL: http://localhost:8081
+   - 用戶名: admin
+   - 密碼: adminpassword
+
+### 後端設置
+
+1. 進入後端目錄：
+
+```bash
 cd tripeak-b2b/backend
 ```
 
-2. 安裝依賴
+2. 安裝依賴：
 
 ```bash
 npm install
 ```
 
-3. 環境設定
-
-複製環境配置模板並填入你的配置
+3. 創建環境變數文件：
 
 ```bash
 cp .env.example .env
 ```
 
-編輯 .env 文件，填入必要的配置:
+4. 根據需要修改 `.env` 文件中的配置。
 
-```
-# 基本配置
-PORT=5000
-NODE_ENV=development
-
-# MongoDB 連接
-MONGO_URI=your_mongodb_connection_string
-
-# JWT 密鑰
-JWT_SECRET=your_jwt_secret
-JWT_EXPIRE=30d
-
-# LINE Bot 設定
-LINE_CHANNEL_SECRET=your_line_channel_secret
-LINE_CHANNEL_ACCESS_TOKEN=your_line_channel_access_token
-
-# 文件上傳設置
-FILE_UPLOAD_PATH=./public/uploads
-MAX_FILE_SIZE=1000000 # 1MB
-```
-
-4. 創建上傳目錄
-
-```bash
-mkdir -p public/uploads/products
-```
-
-5. 啟動開發伺服器
+5. 啟動後端服務：
 
 ```bash
 npm run dev
 ```
 
-## API 文檔
+後端服務將在 http://localhost:8080 運行。
 
-主要 API 端點:
+### 前端設置
 
-- `POST /api/auth/register` - 註冊新用戶
-- `POST /api/auth/login` - 用戶登錄
-- `GET /api/products` - 獲取產品列表
-- `GET /api/categories` - 獲取分類列表
-- `POST /api/orders` - 創建訂單
-- `GET /api/orders` - 獲取訂單列表
-- `PUT /api/orders/:id/status` - 更新訂單狀態
-
-完整 API 文檔請參考 API 說明文件。
-
-## 創建管理員帳號
-
-第一次啟動應用時，需要創建一個管理員帳號:
+1. 進入前端目錄：
 
 ```bash
-# 使用種子腳本創建默認管理員帳號
-npm run seed
+cd tripeak-b2b/frontend
 ```
 
-預設管理員帳號:
-- 郵箱: admin@tripeak.com
-- 密碼: password123 (首次登錄後請修改)
-
-## 執行測試
+2. 安裝依賴：
 
 ```bash
-npm run test
+npm install
 ```
 
-## 部署指南
-
-生產環境部署:
+3. 創建環境變數文件：
 
 ```bash
-npm start
+cp .env.example .env
 ```
 
-推薦使用 PM2 管理 Node.js 應用程序:
+4. 啟動前端服務：
 
 ```bash
-npm install -g pm2
-pm2 start src/server.js --name tripeak-b2b-api
+npm run dev
 ```
 
-## 版本信息
+前端應用將在 http://localhost:5173 運行。
 
-v1.0.0 - 初始發布版本
+## 預設賬戶
 
-## 授權條款
+系統初始化時會創建以下預設賬戶：
 
-© 2023 TRiPEAK. 版權所有。 
+### 管理員
+- 電子郵件: admin@tripeak.com
+- 密碼: admin123
+
+### 經銷商
+- 電子郵件: dealer1@example.com
+- 密碼: dealer123
+
+## 數據庫結構
+
+Docker Compose 啟動時會初始化以下 MongoDB 集合：
+
+- users: 系統用戶（包括管理員）
+- dealers: 經銷商信息
+- products: 產品目錄
+- categories: 產品分類
+- orders: 訂單記錄
+
+## 開發建議
+
+- 前端開發：修改 `frontend` 目錄中的文件
+- 後端開發：修改 `backend` 目錄中的文件
+- 數據庫變更：更新 `mongo-init.js` 文件
+
+## 停止服務
+
+要停止所有相關的 Docker 容器：
+
+```bash
+docker-compose down
+```
+
+如果需要同時刪除數據卷（這將刪除所有數據庫數據）：
+
+```bash
+docker-compose down -v
+``` 

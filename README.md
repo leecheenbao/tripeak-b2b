@@ -79,7 +79,7 @@ cp .env.example .env.local  # 複製環境變數配置檔並修改
 npm run dev
 ```
 
-後端服務將運行在 http://localhost:5000，前端應用將運行在 http://localhost:8080
+後端服務將運行在 http://localhost:8080，前端應用將運行在 http://localhost:5301
 
 ## 構建生產版本
 
