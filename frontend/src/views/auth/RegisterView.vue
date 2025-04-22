@@ -146,11 +146,9 @@
 import { ref, reactive, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
-import { useToast } from 'vue-toastification';
 
 // 路由
 const router = useRouter();
-const toast = useToast();
 
 // 表單數據
 const name = ref('');
@@ -202,9 +200,6 @@ const handleRegister = async () => {
     
     // 呼叫註冊方法
     await authStore.register(registerData);
-    
-    // 顯示成功訊息
-    toast.success('註冊成功，請等待管理員審核您的帳號');
     
     // 註冊成功，重定向到登入頁面
     router.push('/login');
