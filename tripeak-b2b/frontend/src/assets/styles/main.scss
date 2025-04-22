@@ -1,0 +1,144 @@
+/* TRiPEAK B2B 前端主樣式表 */
+
+/* 導入變量 */
+@use 'variables' as *;
+
+/* ===== 全局樣式 ===== */
+html {
+  overflow-y: auto;
+}
+
+body {
+  font-family: $font-family-sans;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 段落間距 */
+p {
+  margin-bottom: $spacing-base;
+}
+
+/* 點擊效果 */
+.clickable {
+  cursor: pointer;
+  transition: $transition-base;
+  
+  &:hover {
+    opacity: 0.8;
+  }
+  
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+/* 頁面轉場效果 */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+/* 滾動條樣式 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: $border-radius-base;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* ===== 布局類 ===== */
+.page-container {
+  padding: $spacing-lg;
+  min-height: calc(100vh - $header-height - $footer-height);
+}
+
+.section-card {
+  border-radius: $border-radius-lg;
+  margin-bottom: $spacing-lg;
+  transition: box-shadow 0.3s ease;
+  
+  &:hover {
+    box-shadow: $shadow-md;
+  }
+}
+
+/* ===== 表單類 ===== */
+.form-container {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: $spacing-lg;
+}
+
+/* ===== 響應式工具類 ===== */
+@media (max-width: $breakpoint-sm) {
+  .page-container {
+    padding: $spacing-base;
+  }
+  
+  .hide-on-mobile {
+    display: none;
+  }
+}
+
+@media (min-width: ($breakpoint-sm + 1px)) and (max-width: $breakpoint-md) {
+  .hide-on-tablet {
+    display: none;
+  }
+}
+
+@media (min-width: ($breakpoint-md + 1px)) {
+  .hide-on-desktop {
+    display: none;
+  }
+}
+
+/* ===== 自定義動畫 ===== */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.pulse {
+  animation: pulse 2s infinite;
+}
+
+/* ===== 打印樣式 ===== */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  .page-break {
+    page-break-after: always;
+  }
+} 

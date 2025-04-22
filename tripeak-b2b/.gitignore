@@ -1,0 +1,79 @@
+# 依賴目錄
+node_modules/
+
+# 構建輸出
+/dist
+/build
+/out
+
+# 環境變數
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# 日誌文件
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs
+*.log
+
+# 編輯器相關
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.sublime-*
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# 測試覆蓋率
+/coverage
+
+# 上傳文件
+/uploads
+/public/uploads
+
+# 臨時文件
+.tmp
+.temp
+
+# 後端特定
+/backend/node_modules
+/backend/public/uploads
+/backend/dist
+
+# 前端特定
+/frontend/node_modules
+/frontend/dist
+/frontend/.cache
+/frontend/.env*.local
+
+# API 文檔
+/docs/api
+
+# 暫存目錄
+/.cache
+/.next
+/.nuxt
+/.docusaurus
+
+# 個人配置
+.npmrc
+
+# 測試資料
+/data/test
+/seeds/test
+
+# 代碼覆蓋率報告
+/.nyc_output
+
+# 特定作業系統文件
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+desktop.ini 
