@@ -4,9 +4,13 @@ const jwt = require('jsonwebtoken');
 
 const UserSchema = new mongoose.Schema(
   {
-    name: {
+    companyName: {
       type: String,
-      required: [true, '請提供名稱'],
+      required: [true, '請提供公司名稱']
+    },
+    contactName: {
+      type: String,
+      required: [true, '請提供聯絡人名稱'],
       trim: true
     },
     email: {
@@ -29,10 +33,6 @@ const UserSchema = new mongoose.Schema(
       enum: ['admin', 'dealer'], // 管理員或經銷商
       default: 'dealer'
     },
-    companyName: {
-      type: String,
-      required: [true, '請提供公司名稱']
-    },
     phone: {
       type: String,
       required: [true, '請提供聯絡電話']
@@ -46,6 +46,14 @@ const UserSchema = new mongoose.Schema(
     isActive: {
       type: Boolean,
       default: true
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now
+    },
+    updatedAt: {
+      type: Date,
+      default: Date.now
     },
     resetPasswordToken: String,
     resetPasswordExpire: Date
@@ -65,7 +73,7 @@ UserSchema.pre('save', async function(next) {
   this.password = await bcrypt.hash(this.password, salt);
 });
 
-// 簽署 JWT
+// 生成 JWT
 UserSchema.methods.getSignedJwtToken = function() {
   return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRE

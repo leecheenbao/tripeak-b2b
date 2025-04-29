@@ -36,6 +36,16 @@ exports.getProducts = async (req, res) => {
       ];
     }
 
+    // 分類
+    if (req.query.category_id) {
+      filter.category = req.query.category_id;
+    }
+
+    // 價格範圍
+    if (req.query.min_price && req.query.max_price) {
+      filter.price = { $gte: req.query.min_price, $lte: req.query.max_price };
+    }
+    
     // 分頁設置
     const page = parseInt(req.query.page, 10) || 1;
     const limit = parseInt(req.query.limit, 10) || 20;
@@ -47,17 +57,23 @@ exports.getProducts = async (req, res) => {
       case 'newest':
         sort = { createdAt: -1 };
         break;
-      case 'price-low':
-        sort = { price: 1 };
-        break;
-      case 'price-high':
+      case 'price:desc':
         sort = { price: -1 };
         break;
-      case 'name-asc':
+      case 'price:asc':
+        sort = { price: -1 };
+        break;
+      case 'name:asc':
         sort = { name: 1 };
         break;
-      case 'name-desc':
+      case 'name:desc':
         sort = { name: -1 };
+        break;
+      case 'stockQuantity:asc':
+        sort = { stockQuantity: 1 };
+        break;
+      case 'stockQuantity:desc':
+        sort = { stockQuantity: -1 };
         break;
       default:
         sort = { displayOrder: 1, name: 1 };

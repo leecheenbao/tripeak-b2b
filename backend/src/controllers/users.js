@@ -17,7 +17,7 @@ exports.getUsers = async (req, res) => {
       filter.isActive = req.query.isActive === 'true';
     }
     if (req.query.search) {
-      filter.name = { $regex: req.query.search, $options: 'i' };
+      filter.contactName = { $regex: req.query.search, $options: 'i' };
     }
 
     // 分頁條件
@@ -78,7 +78,7 @@ exports.getUser = async (req, res) => {
  */
 exports.createUser = async (req, res) => {
   try {
-    const { name, email, password, companyName, phone, address, lineId, role, isActive } = req.body;
+    const { contactName, email, password, companyName, phone, address, lineId, role, isActive } = req.body;
 
     // 檢查是否已存在相同郵箱
     const existingUser = await User.findOne({ email });
@@ -91,7 +91,7 @@ exports.createUser = async (req, res) => {
 
     // 創建用戶
     const user = await User.create({
-      name,
+      contactName,
       email,
       password,
       companyName,
@@ -122,10 +122,10 @@ exports.createUser = async (req, res) => {
  */
 exports.updateUser = async (req, res) => {
   try {
-    const { name, email, companyName, phone, address, lineId, role, isActive } = req.body;
+    const { contactName, email, companyName, phone, address, lineId, role, isActive } = req.body;
 
     const fieldsToUpdate = {
-      name,
+      contactName,
       email,
       companyName,
       phone,

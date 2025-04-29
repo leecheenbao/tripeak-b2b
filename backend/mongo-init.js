@@ -21,10 +21,10 @@ db.users.insertOne({
 
 // 插入預設分類
 const categories = [
-  { name: '牙盤', description: '自行車牙盤系列產品', createdAt: new Date(), updatedAt: new Date() },
-  { name: '曲柄', description: '自行車曲柄系列產品', createdAt: new Date(), updatedAt: new Date() },
-  { name: '導輪', description: '自行車導輪系列產品', createdAt: new Date(), updatedAt: new Date() },
-  { name: '螺絲', description: '自行車相關螺絲配件', createdAt: new Date(), updatedAt: new Date() }
+  { name: '牙盤', description: '自行車牙盤系列產品', isActive: true, displayOrder: 1, createdAt: new Date(), updatedAt: new Date() },
+  { name: '曲柄', description: '自行車曲柄系列產品', isActive: true, displayOrder: 2, createdAt: new Date(), updatedAt: new Date() },
+  { name: '導輪', description: '自行車導輪系列產品', isActive: true, displayOrder: 3, createdAt: new Date(), updatedAt: new Date() },
+  { name: '螺絲', description: '自行車相關螺絲配件', isActive: true, displayOrder: 4, createdAt: new Date(), updatedAt: new Date() }
 ];
 
 db.categories.insertMany(categories);
@@ -39,8 +39,9 @@ const products = categoriesToInsert.flatMap(category => {
     const product = {
       name: `${category.name} 測試產品 ${i}`,
       description: `${category.name}系列的高品質產品，適合專業車手使用。`,
-      price: Math.floor(Math.random() * 9000) + 1000,
-      stock: Math.floor(Math.random() * 100) + 10,
+      price: Math.floor(Math.random() * 900) + 100,
+      stockQuantity: Math.floor(Math.random() * 100) + 10,
+      sku: `TP-${category.name}-${i}`,
       categoryId: category._id,
       categoryName: category.name,
       images: [

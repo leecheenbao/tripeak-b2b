@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const logger = require('../utils/logger');
+const jwt = require('jsonwebtoken');
 
 /**
  * @desc    註冊用戶
@@ -69,7 +70,6 @@ exports.login = async (req, res) => {
 
     // 檢查用戶
     const user = await User.findOne({ email }).select('+password');
-    console.log(user);
     if (!user) {
       return res.status(401).json({
         success: false,
@@ -77,7 +77,6 @@ exports.login = async (req, res) => {
       });
     }
 
-    console.log(user.isActive);
     // 檢查是否帳號被停用
     if (!user.isActive) {
       return res.status(401).json({
@@ -87,9 +86,7 @@ exports.login = async (req, res) => {
     }
 
     // 檢查密碼
-    // const isMatch = await user.matchPassword(password);
-    const isMatch = true;
-    console.log(isMatch);
+    const isMatch = await user.matchPassword(password);
     if (!isMatch) {
       return res.status(401).json({
         success: false,
@@ -213,6 +210,37 @@ exports.updatePassword = async (req, res) => {
   }
 };
 
+exports.updateProfile = async (req, res) => {
+  try {
+    const user = await User.findByIdAndUpdate(req.user.id, req.body, {
+      new: true,
+      runValidators: true
+    });
+
+
+    // 更改資料
+    user.contactName = req.body.contactName;
+    user.companyName = req.body.companyName;
+    user.phone = req.body.phone;
+    user.address = req.body.address;
+    user.lineId = req.body.lineId;
+
+    await user.save();
+    
+
+    res.status(200).json({
+      success: true,
+      data: user
+    });
+  } catch (err) {
+    logger.error(`更新用戶資料失敗: ${err.message}`);
+    res.status(500).json({
+      success: false,
+      error: '更新用戶資料失敗'
+    });
+  }
+};
+
 /**
  * 獲取 token，創建 cookie 並發送響應
  */
@@ -231,4 +259,43 @@ const sendTokenResponse = (user, statusCode, res) => {
       companyName: user.companyName
     }
   });
+};
+
+exports.protect = async (req, res, next) => {
+  let token;
+
+  // 從請求頭中獲取 token
+  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+    token = req.headers.authorization.split(' ')[1];
+  }
+
+  // 檢查 token 是否存在
+  if (!token) {
+    return res.status(401).json({
+      success: false,
+      error: '未授權訪問'
+    });
+  }
+
+  try {
+    // 驗證 token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    // 獲取用戶信息
+    req.user = await User.findById(decoded.id);
+    
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        error: '用戶不存在'
+      });
+    }
+
+    next();
+  } catch (err) {
+    return res.status(401).json({
+      success: false,
+      error: '未授權訪問'
+    });
+  }
 }; 
