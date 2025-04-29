@@ -152,7 +152,7 @@ const router = useRouter();
 
 // 表單數據
 const name = ref('');
-const contactName = ref('');
+const companyName = ref('');
 const email = ref('');
 const phone = ref('');
 const password = ref('');
@@ -191,7 +191,7 @@ const handleRegister = async () => {
     // 準備註冊數據
     const registerData = {
       name: name.value,
-      companyName: contactName.value,
+      companyName: companyName.value,
       email: email.value,
       phone: phone.value,
       password: password.value,
