@@ -12,7 +12,7 @@
             variant="outlined"
             hide-details
             class="mr-2"
-            style="max-width: 220px;"
+            style="width: 220px;"
             @update:model-value="handleSearch"
           ></v-text-field>
           <v-btn
@@ -78,41 +78,29 @@
               價格區間
             </v-card-title>
             <v-card-text>
-              <v-range-slider
-                v-model="priceRange"
-                :min="0"
-                :max="10000"
-                :step="100"
-                color="primary"
-                track-color="grey-lighten-3"
-                thumb-label
-                @update:model-value="handlePriceFilter"
-              >
+              <div class="price-range-container">
+                <div class="d-flex align-center mb-10">
+                </div>
+                <v-range-slider
+                  v-model="priceRange"
+                  :min="0"
+                  :max="10000"
+                  :step="100"
+                  color="primary"
+                  track-color="grey-lighten-3"
+                  thumb-label="always"
+                  thumb-size="24"
+                  class="mb-4"
+                  @update:model-value="handlePriceFilter"
+                >
                 <template v-slot:prepend>
-                  <v-text-field
-                    v-model="priceRange[0]"
-                    type="number"
-                    density="compact"
-                    style="width: 90px"
-                    hide-details
-                    single-line
-                    variant="outlined"
-                    @update:model-value="setPriceRange"
-                  ></v-text-field>
+                  
                 </template>
                 <template v-slot:append>
-                  <v-text-field
-                    v-model="priceRange[1]"
-                    type="number"
-                    density="compact"
-                    style="width: 90px"
-                    hide-details
-                    single-line
-                    variant="outlined"
-                    @update:model-value="setPriceRange"
-                  ></v-text-field>
+                  
                 </template>
               </v-range-slider>
+            </div>
             </v-card-text>
 
             <v-divider class="my-2"></v-divider>
@@ -363,44 +351,59 @@
             </template>
           </v-list-item>
           <v-divider></v-divider>
-          <v-list-subheader>價格區間</v-list-subheader>
+          <v-list-subheader>價格區間111</v-list-subheader>
           <v-list-item>
             <v-card-text>
-              <v-range-slider
-                v-model="priceRange"
-                :min="0"
-                :max="10000"
-                :step="100"
-                color="primary"
-                track-color="grey-lighten-3"
-                thumb-label
-                @update:model-value="handlePriceFilter"
-              >
-                <template v-slot:prepend>
-                  <v-text-field
-                    v-model="priceRange[0]"
-                    type="number"
-                    density="compact"
-                    style="width: 90px"
-                    hide-details
-                    single-line
-                    variant="outlined"
-                    @update:model-value="setPriceRange"
-                  ></v-text-field>
-                </template>
-                <template v-slot:append>
-                  <v-text-field
-                    v-model="priceRange[1]"
-                    type="number"
-                    density="compact"
-                    style="width: 90px"
-                    hide-details
-                    single-line
-                    variant="outlined"
-                    @update:model-value="setPriceRange"
-                  ></v-text-field>
-                </template>
-              </v-range-slider>
+              <div class="price-range-container">
+                <div class="d-flex align-center mb-2">
+                  <span class="text-subtitle-2">價格區間</span>
+                  <v-spacer></v-spacer>
+                  <span class="text-caption text-grey">
+                    NT$ {{ priceRange[0].toLocaleString() }} - NT$ {{ priceRange[1].toLocaleString() }}
+                  </span>
+                </div>
+                <v-range-slider
+                  v-model="priceRange"
+                  :min="0"
+                  :max="10000"
+                  :step="100"
+                  color="primary"
+                  track-color="grey-lighten-3"
+                  thumb-label="always"
+                  thumb-size="24"
+                  class="mb-4"
+                  @update:model-value="handlePriceFilter"
+                >
+                  <template v-slot:prepend>
+                    <v-text-field
+                      v-model="priceRange[0]"
+                      type="number"
+                      density="compact"
+                      style="width: 100px"
+                      hide-details
+                      single-line
+                      variant="outlined"
+                      prefix="NT$"
+                      class="price-input"
+                      @update:model-value="setPriceRange"
+                    ></v-text-field>
+                  </template>
+                  <template v-slot:append>
+                    <v-text-field
+                      v-model="priceRange[1]"
+                      type="number"
+                      density="compact"
+                      style="width: 100px"
+                      hide-details
+                      single-line
+                      variant="outlined"
+                      prefix="NT$"
+                      class="price-input"
+                      @update:model-value="setPriceRange"
+                    ></v-text-field>
+                  </template>
+                </v-range-slider>
+              </div>
             </v-card-text>
           </v-list-item>
         </v-list>
@@ -439,9 +442,12 @@
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue';
 import { useUiStore } from '@/stores/ui';
+import { productsApi, categoriesApi } from '@/api';
+import { useToast } from 'vue-toastification';
 
 // Store
 const uiStore = useUiStore();
+const toast = useToast();
 
 // 狀態
 const products = ref([]);
@@ -449,7 +455,7 @@ const categories = ref([]);
 const loading = ref(true);
 const viewMode = ref('grid');
 const page = ref(1);
-const totalPages = ref(5);
+const totalPages = ref(1);
 const itemsPerPage = ref(9);
 const selectedCategory = ref(null);
 const searchQuery = ref('');
@@ -464,49 +470,76 @@ const snackbar = reactive({
 });
 
 // 方法
-const fetchProducts = async () => {
+const fetchProducts = async (options = {}) => {
   loading.value = true;
   
   try {
-    // 模擬 API 調用
-    setTimeout(() => {
-      products.value = generateMockProducts(20);
-      loading.value = false;
-    }, 1000);
+    // 構建查詢參數
+    const params = {
+      page: options.page || page.value,
+      limit: options.itemsPerPage || itemsPerPage.value,
+      keyword: searchQuery.value,
+      category_id: selectedCategory.value,
+      min_price: priceRange.value[0],
+      max_price: priceRange.value[1]
+    };
+
+    // 處理排序
+    if (options.sortBy && options.sortBy.length > 0) {
+      const sortField = options.sortBy[0];
+      const sortOrder = options.sortDesc[0] ? 'desc' : 'asc';
+      params.sort = `${sortField}:${sortOrder}`;
+    }
+
+    // 調用 API
+    const response = await productsApi.getProducts(params);
+    
+    // 更新數據
+    products.value = response.data.data;
+    totalPages.value = Math.ceil(response.data.pagination.total / itemsPerPage.value);
+    
   } catch (error) {
-    console.error('獲取產品失敗:', error);
+    console.error('獲取產品列表失敗:', error);
+    toast.error('獲取產品列表失敗');
+  } finally {
     loading.value = false;
   }
 };
 
 const fetchCategories = async () => {
   try {
-    // 模擬 API 調用
-    setTimeout(() => {
-      categories.value = [
-        { id: 'all', name: '全部產品', count: 152 },
-        { id: 'chainrings', name: '牙盤', count: 48 },
-        { id: 'cranks', name: '曲柄', count: 36 },
-        { id: 'pulleys', name: '導輪', count: 24 },
-        { id: 'bolts', name: '螺絲', count: 44 }
-      ];
-    }, 500);
+    const response = await categoriesApi.getCategories();
+    // 添加"全部產品"選項
+    categories.value = [
+      { id: 'all', name: '全部產品', count: response.data.total || 0 },
+      ...response.data.data.map(category => ({
+        id: category._id,
+        name: category.name,
+        count: category.count || 0
+      }))
+    ];
   } catch (error) {
     console.error('獲取分類失敗:', error);
+    toast.error('獲取分類失敗');
   }
 };
 
 const selectCategory = (categoryId) => {
   selectedCategory.value = categoryId === 'all' ? null : categoryId;
-  fetchProducts();
+  page.value = 1; // 重置頁碼
+  fetchProducts({
+    page: 1,
+    itemsPerPage: itemsPerPage.value
+  });
 };
 
 const handleSearch = () => {
-  page.value = 1;
+  page.value = 1; // 重置頁碼
   fetchProducts();
 };
 
 const handlePriceFilter = () => {
+  page.value = 1; // 重置頁碼
   fetchProducts();
 };
 
@@ -515,12 +548,15 @@ const setPriceRange = () => {
   if (priceRange.value[0] > priceRange.value[1]) {
     priceRange.value = [priceRange.value[1], priceRange.value[0]];
   }
+  page.value = 1; // 重置頁碼
+  fetchProducts();
 };
 
 const resetFilters = () => {
   selectedCategory.value = null;
   searchQuery.value = '';
   priceRange.value = [0, 10000];
+  page.value = 1; // 重置頁碼
   fetchProducts();
   
   if (showFilterDialog.value) {
@@ -540,60 +576,6 @@ const addToCart = (product) => {
   snackbar.show = true;
 };
 
-// 模擬產品數據生成
-const generateMockProducts = (count) => {
-  const mockProducts = [];
-  
-  const images = [
-    'https://picsum.photos/id/237/300/300',
-    'https://picsum.photos/id/238/300/300',
-    'https://picsum.photos/id/239/300/300',
-    'https://picsum.photos/id/240/300/300',
-    'https://picsum.photos/id/241/300/300',
-  ];
-  
-  const names = [
-    '公路車專用鋁合金牙盤 53/39T',
-    '碳纖維牙盤 50/34T',
-    'MTB 鋁合金牙盤 36/22T',
-    '鋁合金中空一體式曲柄 172.5mm',
-    '碳纖維曲柄組 175mm',
-    '11速陶瓷培林導輪組',
-    '鈦合金牙盤固定螺絲組',
-    '碳纖維一體式牙盤 40T',
-    'E-Bike專用牙盤 42T',
-    '碳纖維導輪組 12T',
-  ];
-  
-  const categories = [
-    { id: 'chainrings', name: '牙盤' },
-    { id: 'cranks', name: '曲柄' },
-    { id: 'pulleys', name: '導輪' },
-    { id: 'bolts', name: '螺絲' }
-  ];
-  
-  for (let i = 1; i <= count; i++) {
-    const nameIndex = Math.floor(Math.random() * names.length);
-    const imageIndex = Math.floor(Math.random() * images.length);
-    const categoryIndex = Math.floor(Math.random() * categories.length);
-    const price = Math.floor(Math.random() * 9000) + 1000;
-    const discount = Math.random() > 0.7;
-    
-    mockProducts.push({
-      id: `prod-${i}`,
-      name: names[nameIndex],
-      image: images[imageIndex],
-      price: price,
-      rating: (Math.random() * 2 + 3).toFixed(1),
-      categoryId: categories[categoryIndex].id,
-      categoryName: categories[categoryIndex].name,
-      discount: discount
-    });
-  }
-  
-  return mockProducts;
-};
-
 // 生命週期鉤子
 onMounted(() => {
   fetchProducts();
@@ -609,6 +591,31 @@ onMounted(() => {
   &:hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.price-range-container {
+  padding: 8px 0;
+  
+  .price-input {
+    :deep(.v-field__input) {
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+  }
+  
+  :deep(.v-slider-thumb__label) {
+    background-color: primary;
+    color: white;
+    font-size: 12px;
+  }
+  
+  :deep(.v-slider-track__background) {
+    opacity: 0.3;
+  }
+  
+  :deep(.v-slider-track__fill) {
+    opacity: 1;
   }
 }
 </style> 

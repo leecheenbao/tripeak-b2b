@@ -32,6 +32,7 @@ const AdminOrderList = () => import('@/views/admin/orders/OrderListView.vue');
 const AdminOrderDetail = () => import('@/views/admin/orders/OrderDetailView.vue');
 const AdminReports = () => import('@/views/admin/reports/ReportsView.vue');
 const AdminLineMessages = () => import('@/views/admin/line/LineMessagesView.vue');
+// const Profile = () => import('@/views/profile/ProfileView.vue');
 
 // 路由配置
 const routes = [

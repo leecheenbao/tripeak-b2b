@@ -1,0 +1,631 @@
+{
+    "info": {
+      "name": "Tripeak API",
+      "description": "Tripeak 電商平台 API 測試集合",
+      "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+      {
+        "name": "認證",
+        "item": [
+          {
+            "name": "登入",
+            "request": {
+              "method": "POST",
+              "header": [],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"email\": \"admin@tripeak.com\",\n    \"password\": \"password123\"\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{baseUrl}}/api/auth/login",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "auth", "login"]
+              }
+            }
+          },
+          {
+            "name": "註冊",
+            "request": {
+              "method": "POST",
+              "header": [],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"name\": \"測試用戶\",\n    \"email\": \"test@example.com\",\n    \"password\": \"password123\",\n    \"companyName\": \"測試公司\",\n    \"phone\": \"0912345678\",\n    \"address\": \"台北市測試路123號\",\n    \"lineId\": \"test_line_id\"\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{baseUrl}}/api/auth/register",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "auth", "register"]
+              }
+            }
+          },
+          {
+            "name": "獲取當前用戶",
+            "request": {
+              "method": "GET",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "url": {
+                "raw": "{{baseUrl}}/api/auth/me",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "auth", "me"]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "用戶管理",
+        "item": [
+          {
+            "name": "獲取用戶列表",
+            "request": {
+              "method": "GET",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "url": {
+                "raw": "{{baseUrl}}/api/users",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "users"],
+                "query": [
+                  {
+                    "key": "page",
+                    "value": "1",
+                    "description": "頁碼"
+                  },
+                  {
+                    "key": "limit",
+                    "value": "10",
+                    "description": "每頁記錄數"
+                  },
+                  {
+                    "key": "role",
+                    "value": "",
+                    "description": "角色篩選",
+                    "disabled": true
+                  },
+                  {
+                    "key": "isActive",
+                    "value": "",
+                    "description": "狀態篩選",
+                    "disabled": true
+                  },
+                  {
+                    "key": "search",
+                    "value": "",
+                    "description": "搜索關鍵字",
+                    "disabled": true
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "name": "創建用戶",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"name\": \"新用戶\",\n    \"email\": \"new@example.com\",\n    \"password\": \"password123\",\n    \"companyName\": \"新公司\",\n    \"phone\": \"0912345678\",\n    \"address\": \"台北市新路123號\",\n    \"lineId\": \"new_line_id\",\n    \"role\": \"dealer\",\n    \"isActive\": true\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{baseUrl}}/api/users",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "users"]
+              }
+            }
+          },
+          {
+            "name": "更新用戶",
+            "request": {
+              "method": "PUT",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"name\": \"更新用戶\",\n    \"companyName\": \"更新公司\",\n    \"phone\": \"0987654321\",\n    \"address\": \"台北市更新路456號\",\n    \"lineId\": \"updated_line_id\",\n    \"role\": \"dealer\",\n    \"isActive\": true\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{baseUrl}}/api/users/:id",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "users", ":id"],
+                "variable": [
+                  {
+                    "key": "id",
+                    "value": "",
+                    "description": "用戶 ID"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "name": "重設密碼",
+            "request": {
+              "method": "PUT",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"password\": \"newpassword123\"\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{baseUrl}}/api/users/:id/resetpassword",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "users", ":id", "resetpassword"],
+                "variable": [
+                  {
+                    "key": "id",
+                    "value": "",
+                    "description": "用戶 ID"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "name": "刪除用戶",
+            "request": {
+              "method": "DELETE",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "url": {
+                "raw": "{{baseUrl}}/api/users/:id",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "users", ":id"],
+                "variable": [
+                  {
+                    "key": "id",
+                    "value": "",
+                    "description": "用戶 ID"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "產品分類",
+        "item": [
+          {
+            "name": "獲取分類列表",
+            "request": {
+              "method": "GET",
+              "header": [],
+              "url": {
+                "raw": "{{baseUrl}}/api/categories",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "categories"],
+                "query": [
+                  {
+                    "key": "isActive",
+                    "value": "true",
+                    "description": "是否只顯示啟用的分類",
+                    "disabled": true
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "name": "創建分類",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"name\": \"新分類\",\n    \"description\": \"這是一個新分類\",\n    \"isActive\": true,\n    \"displayOrder\": 1\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{baseUrl}}/api/categories",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "categories"]
+              }
+            }
+          },
+          {
+            "name": "更新分類",
+            "request": {
+              "method": "PUT",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"name\": \"更新分類\",\n    \"description\": \"這是更新後的分類\",\n    \"isActive\": true,\n    \"displayOrder\": 2\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{baseUrl}}/api/categories/:id",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "categories", ":id"],
+                "variable": [
+                  {
+                    "key": "id",
+                    "value": "",
+                    "description": "分類 ID"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "name": "刪除分類",
+            "request": {
+              "method": "DELETE",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "url": {
+                "raw": "{{baseUrl}}/api/categories/:id",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "categories", ":id"],
+                "variable": [
+                  {
+                    "key": "id",
+                    "value": "",
+                    "description": "分類 ID"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "產品管理",
+        "item": [
+          {
+            "name": "獲取產品列表",
+            "request": {
+              "method": "GET",
+              "header": [],
+              "url": {
+                "raw": "{{baseUrl}}/api/products",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "products"],
+                "query": [
+                  {
+                    "key": "page",
+                    "value": "1",
+                    "description": "頁碼"
+                  },
+                  {
+                    "key": "limit",
+                    "value": "20",
+                    "description": "每頁記錄數"
+                  },
+                  {
+                    "key": "category",
+                    "value": "",
+                    "description": "分類 ID",
+                    "disabled": true
+                  },
+                  {
+                    "key": "keyword",
+                    "value": "",
+                    "description": "搜索關鍵字",
+                    "disabled": true
+                  },
+                  {
+                    "key": "sort",
+                    "value": "",
+                    "description": "排序方式",
+                    "disabled": true
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "name": "創建產品",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"name\": \"新產品\",\n    \"description\": \"這是一個新產品\",\n    \"sku\": \"SKU001\",\n    \"price\": 1000,\n    \"stockQuantity\": 100,\n    \"category\": \"分類ID\",\n    \"isActive\": true,\n    \"displayOrder\": 1,\n    \"unit\": \"件\"\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{baseUrl}}/api/products",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "products"]
+              }
+            }
+          },
+          {
+            "name": "上傳產品圖片",
+            "request": {
+              "method": "PUT",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "formdata",
+                "formdata": [
+                  {
+                    "key": "image",
+                    "type": "file",
+                    "src": []
+                  }
+                ]
+              },
+              "url": {
+                "raw": "{{baseUrl}}/api/products/:id/upload",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "products", ":id", "upload"],
+                "variable": [
+                  {
+                    "key": "id",
+                    "value": "",
+                    "description": "產品 ID"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "name": "訂單管理",
+        "item": [
+          {
+            "name": "獲取訂單列表",
+            "request": {
+              "method": "GET",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "url": {
+                "raw": "{{baseUrl}}/api/orders",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "orders"],
+                "query": [
+                  {
+                    "key": "page",
+                    "value": "1",
+                    "description": "頁碼"
+                  },
+                  {
+                    "key": "limit",
+                    "value": "20",
+                    "description": "每頁記錄數"
+                  },
+                  {
+                    "key": "status",
+                    "value": "",
+                    "description": "訂單狀態",
+                    "disabled": true
+                  },
+                  {
+                    "key": "startDate",
+                    "value": "",
+                    "description": "開始日期",
+                    "disabled": true
+                  },
+                  {
+                    "key": "endDate",
+                    "value": "",
+                    "description": "結束日期",
+                    "disabled": true
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "name": "創建訂單",
+            "request": {
+              "method": "POST",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"items\": [\n        {\n            \"product\": \"產品ID\",\n            \"quantity\": 2\n        }\n    ],\n    \"note\": \"訂單備註\",\n    \"shippingAddress\": \"配送地址\"\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{baseUrl}}/api/orders",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "orders"]
+              }
+            }
+          },
+          {
+            "name": "更新訂單狀態",
+            "request": {
+              "method": "PUT",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "body": {
+                "mode": "raw",
+                "raw": "{\n    \"status\": \"processing\"\n}",
+                "options": {
+                  "raw": {
+                    "language": "json"
+                  }
+                }
+              },
+              "url": {
+                "raw": "{{baseUrl}}/api/orders/:id/status",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "orders", ":id", "status"],
+                "variable": [
+                  {
+                    "key": "id",
+                    "value": "",
+                    "description": "訂單 ID"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "name": "導出訂單",
+            "request": {
+              "method": "GET",
+              "header": [
+                {
+                  "key": "Authorization",
+                  "value": "Bearer {{token}}",
+                  "type": "text"
+                }
+              ],
+              "url": {
+                "raw": "{{baseUrl}}/api/orders/export",
+                "host": ["{{baseUrl}}"],
+                "path": ["api", "orders", "export"],
+                "query": [
+                  {
+                    "key": "status",
+                    "value": "",
+                    "description": "訂單狀態",
+                    "disabled": true
+                  },
+                  {
+                    "key": "startDate",
+                    "value": "",
+                    "description": "開始日期",
+                    "disabled": true
+                  },
+                  {
+                    "key": "endDate",
+                    "value": "",
+                    "description": "結束日期",
+                    "disabled": true
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "variable": [
+      {
+        "key": "baseUrl",
+        "value": "http://localhost:8080",
+        "type": "string"
+      },
+      {
+        "key": "token",
+        "value": "your_jwt_token_here",
+        "type": "string"
+      }
+    ]
+  }

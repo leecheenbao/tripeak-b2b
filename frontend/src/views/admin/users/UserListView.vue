@@ -75,14 +75,24 @@
           class="elevation-0"
           @update:options="handleTableUpdate"
         >
-          <!-- 用戶名稱 -->
-          <template v-slot:item.name="{ item }">
+          <!-- 公司名稱 -->
+          <template v-slot:item.companyName="{ item }">
             <div class="d-flex align-center">
               <v-avatar size="36" color="primary" class="mr-3">
-                <span class="text-h6 text-white">{{ getInitials(item.name) }}</span>
+                <span class="text-h6 text-white">{{ getInitials(item.companyName) }}</span>
+              </v-avatar>
+              <div class="font-weight-medium">{{ item.companyName }}</div>
+            </div>
+          </template>
+          
+          <!-- 用戶名稱 -->
+          <template v-slot:item.contactName="{ item }">
+            <div class="d-flex align-center">
+              <v-avatar size="36" color="primary" class="mr-3">
+                <span class="text-h6 text-white">{{ getInitials(item.contactName) }}</span>
               </v-avatar>
               <div>
-                <div class="font-weight-medium">{{ item.name }}</div>
+                <div class="font-weight-medium">{{ item.contactName }}</div>
                 <div class="text-caption text-grey">{{ item.email }}</div>
               </div>
             </div>
@@ -160,7 +170,7 @@
             ></v-text-field>
             
             <v-text-field
-              v-model="editedItem.name"
+              v-model="editedItem.contactName"
               label="姓名"
               :rules="[rules.required]"
               variant="outlined"
@@ -240,7 +250,7 @@
       <v-card>
         <v-card-title class="text-h5">確認刪除</v-card-title>
         <v-card-text>
-          您確定要刪除用戶 <strong>{{ userToDelete?.name }}</strong> 嗎？此操作無法撤銷。
+          您確定要刪除用戶 <strong>{{ userToDelete?.contactName }}</strong> 嗎？此操作無法撤銷。
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -277,7 +287,8 @@ const toast = useToast();
 
 // 表格配置
 const headers = [
-  { title: '用戶', key: 'name', sortable: true },
+  { title: '公司名稱', key: 'companyName', sortable: true },
+  { title: '用戶', key: 'contactName', sortable: true },
   { title: '角色', key: 'role', sortable: true },
   { title: '狀態', key: 'isActive', sortable: true },
   { title: '創建時間', key: 'createdAt', sortable: true },
@@ -303,7 +314,7 @@ const userToDelete = ref(null);
 
 // 編輯項目
 const defaultItem = {
-  name: '',
+  contactName: '',
   email: '',
   password: '',
   role: 'dealer',
@@ -339,7 +350,7 @@ const fetchUsers = async (options = {}) => {
     // 構建查詢參數
     const params = {
       page: options.page || 1,
-      per_page: options.itemsPerPage || itemsPerPage.value,
+      limit: options.itemsPerPage || itemsPerPage.value,
       search: search.value,
       role: roleFilter.value,
       isActive: statusFilter.value
@@ -416,7 +427,10 @@ const saveUser = async () => {
 
       console.log(editedItem.value.isActive);
       await usersApi.updateUser(editedItem.value._id, {
-        name: editedItem.value.name,
+        companyName: editedItem.value.companyName,
+        contactName: editedItem.value.contactName,
+        email: editedItem.value.email,
+        phone: editedItem.value.phone,
         role: editedItem.value.role,
         isActive: editedItem.value.isActive
       });
@@ -426,7 +440,7 @@ const saveUser = async () => {
       // 新增用戶
       const response = await usersApi.createUser({
         companyName: editedItem.value.companyName,
-        name: editedItem.value.name,
+        contactName: editedItem.value.contactName,
         email: editedItem.value.email,
         phone: editedItem.value.phone,
         password: editedItem.value.password,
@@ -495,9 +509,9 @@ const toggleUserStatus = async (item) => {
 };
 
 // 輔助方法
-const getInitials = (name) => {
-  if (!name) return '';
-  return name
+const getInitials = (contactName) => {
+  if (!contactName) return '';
+  return contactName
     .split(' ')
     .map(part => part.charAt(0))
     .join('')

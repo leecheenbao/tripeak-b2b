@@ -185,7 +185,7 @@ export const useAuthStore = defineStore('auth', {
       this.error = null;
       
       try {
-        const response = await axios.put(`${API_URL}/auth/update-password`, passwordData, {
+        const response = await axios.put(`${API_URL}/auth/updatepassword`, passwordData, {
           headers: {
             Authorization: `Bearer ${this.token}`
           }
