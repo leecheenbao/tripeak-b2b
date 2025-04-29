@@ -167,7 +167,9 @@ const importData = async () => {
     logger.info('創建初始商品分類');
 
     // 匯入經銷商
-    await User.insertMany(dealers);
+    for (const dealer of dealers) {
+      await User.create(dealer);
+    }
     logger.info('創建初始經銷商');
 
     // 生成並匯入產品

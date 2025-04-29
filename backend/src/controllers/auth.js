@@ -73,7 +73,7 @@ exports.login = async (req, res) => {
     if (!user) {
       return res.status(401).json({
         success: false,
-        error: '無效的憑證'
+        error: '此帳號不存在'
       });
     }
 
@@ -90,7 +90,7 @@ exports.login = async (req, res) => {
     if (!isMatch) {
       return res.status(401).json({
         success: false,
-        error: '無效的憑證'
+        error: '密碼錯誤'
       });
     }
 
@@ -256,7 +256,8 @@ const sendTokenResponse = (user, statusCode, res) => {
       name: user.name,
       email: user.email,
       role: user.role,
-      companyName: user.companyName
+      companyName: user.companyName,
+      contactName: user.contactName
     }
   });
 };
