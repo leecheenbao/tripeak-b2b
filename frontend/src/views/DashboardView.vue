@@ -109,6 +109,68 @@
         </v-col>
       </v-row>
       
+      <!-- 購物車摘要 -->
+      <h2 class="text-h5 font-weight-bold mt-6 mb-4">購物車摘要</h2>
+      <v-card>
+        <v-card-text>
+          <div v-if="cartStore.items.length === 0" class="text-center py-4">
+            <v-icon
+              size="48"
+              color="grey-lighten-1"
+              class="mb-2"
+            >mdi-cart-outline</v-icon>
+            <div class="text-subtitle-1 text-grey">購物車是空的</div>
+          </div>
+          <div v-else>
+            <v-list>
+              <v-list-item
+                v-for="item in cartStore.items.slice(0, 3)"
+                :key="item._id"
+                class="cart-item"
+              >
+                <template v-slot:prepend>
+                  <v-avatar
+                    size="40"
+                    rounded
+                    class="me-3"
+                  >
+                    <v-img :src="item.imageUrl" cover></v-img>
+                  </v-avatar>
+                </template>
+                <v-list-item-title class="text-subtitle-2">
+                  {{ item.name }}
+                </v-list-item-title>
+                <template v-slot:append>
+                  <div class="text-subtitle-2">
+                    {{ item.quantity }} x NT$ {{ item.price.toLocaleString() }}
+                  </div>
+                </template>
+              </v-list-item>
+            </v-list>
+            <v-divider class="my-2"></v-divider>
+            <div class="d-flex justify-space-between align-center mt-2">
+              <div class="text-subtitle-1 font-weight-medium">
+                共 {{ cartStore.totalItems }} 件商品
+              </div>
+              <div class="text-subtitle-1 font-weight-bold primary--text">
+                NT$ {{ cartStore.formattedTotalAmount }}
+              </div>
+            </div>
+          </div>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="primary"
+            variant="text"
+            :to="{ name: 'Cart' }"
+          >
+            查看購物車
+            <v-icon end>mdi-chevron-right</v-icon>
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+      
       <!-- 最近訂單 -->
       <h2 class="text-h5 font-weight-bold mt-6 mb-4">最近訂單</h2>
       <v-card>
@@ -169,9 +231,9 @@
         <v-col
           v-for="action in quickActions"
           :key="action.title"
-          cols="6"
-          sm="4"
-          md="2"
+          cols="12"
+          sm="6"
+          md="3"
         >
           <v-card
             class="quick-action-card"
@@ -198,13 +260,15 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useAuthStore } from '@/stores/auth';
+import { useCartStore } from '@/stores/cart';
 import { format } from 'date-fns';
 import { zhTW } from 'date-fns/locale';
 
 // Store
 const authStore = useAuthStore();
+const cartStore = useCartStore();
 const user = computed(() => authStore.user || {});
-const userDisplayName = computed(() => user.value?.name || '用戶');
+const userDisplayName = computed(() => user.value.data?.contactName || '用戶');
 
 // 格式化當前日期
 const formattedDate = computed(() => {
@@ -235,10 +299,9 @@ const headers = [
 // 快速訪問項目
 const quickActions = [
   { title: '瀏覽產品', icon: 'mdi-shopping', color: 'primary', to: { name: 'Products' } },
-  { title: '購物車', icon: 'mdi-cart', color: 'info', to: { name: 'Checkout' } },
+  { title: '購物車', icon: 'mdi-cart', color: 'info', to: { name: 'Cart' } },
   { title: '我的訂單', icon: 'mdi-clipboard-list', color: 'success', to: { name: 'Orders' } },
   { title: '個人資料', icon: 'mdi-account', color: 'warning', to: { name: 'Profile' } },
-  { title: '設定', icon: 'mdi-cog', color: 'grey', to: { name: 'Settings' } },
   { title: '聯絡我們', icon: 'mdi-headset', color: 'error', to: '#' }
 ];
 
@@ -275,25 +338,15 @@ const fetchDashboardData = async () => {
   loading.value = true;
   
   try {
+    // 獲取當前用戶資料
+    await authStore.fetchCurrentUser();
+    console.log(user.value.data.companyName);
+
+    
     // 模擬 API 調用
     setTimeout(() => {
-      // 統計數據
-      stats.value = {
-        totalOrders: 25,
-        pendingOrders: 3,
-        shippedOrders: 18,
-        totalProducts: 152
-      };
-      
-      // 最近訂單
-      recentOrders.value = [
-        { id: '1', orderNumber: 'ORD-2023-001', status: 'delivered', total: 15600, createdAt: '2023-06-01T08:30:00Z' },
-        { id: '2', orderNumber: 'ORD-2023-002', status: 'shipped', total: 8200, createdAt: '2023-06-10T14:20:00Z' },
-        { id: '3', orderNumber: 'ORD-2023-003', status: 'processing', total: 12400, createdAt: '2023-06-15T09:45:00Z' },
-        { id: '4', orderNumber: 'ORD-2023-004', status: 'pending', total: 5300, createdAt: '2023-06-20T16:10:00Z' },
-        { id: '5', orderNumber: 'ORD-2023-005', status: 'cancelled', total: 7800, createdAt: '2023-06-22T11:30:00Z' }
-      ];
-      
+      // TODO: 統計數據
+      // TODO: 最近訂單
       loading.value = false;
     }, 1000);
     

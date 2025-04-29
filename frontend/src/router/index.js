@@ -182,6 +182,16 @@ const routes = [
     meta: { requiresAuth: true, requiresAdmin: true, title: 'LINE 通知管理' }
   },
   
+  // 購物車頁面
+  {
+    path: '/cart',
+    name: 'Cart',
+    component: () => import('@/views/CartView.vue'),
+    meta: {
+      requiresAuth: true
+    }
+  },
+  
   // 404 路由
   {
     path: '/:pathMatch(.*)*',

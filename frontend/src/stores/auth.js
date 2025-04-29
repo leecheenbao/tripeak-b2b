@@ -9,14 +9,16 @@ export const useAuthStore = defineStore('auth', {
     token: localStorage.getItem('token') || null,
     loading: false,
     error: null,
-    isAuthenticated: !!localStorage.getItem('token')
+    isAuthenticated: !!localStorage.getItem('token'),
+    rememberMe: localStorage.getItem('rememberMe') === 'true'
   }),
   
   getters: {
     getCurrentUser: state => state.user,
     isLoggedIn: state => !!state.token && state.isAuthenticated,
     isAdmin: state => state.user?.role === 'admin',
-    isDealer: state => state.user?.role === 'dealer'
+    isDealer: state => state.user?.role === 'dealer',
+    isRememberMe: state => state.rememberMe
   },
   
   actions: {
@@ -33,8 +35,16 @@ export const useAuthStore = defineStore('auth', {
         this.token = token;
         this.user = user;
         this.isAuthenticated = true;
+        this.rememberMe = credentials.rememberMe || false;
         
-        localStorage.setItem('token', token);
+        // 根據記住我選項決定存儲方式
+        if (this.rememberMe) {
+          localStorage.setItem('token', token);
+          localStorage.setItem('rememberMe', 'true');
+        } else {
+          sessionStorage.setItem('token', token);
+          localStorage.removeItem('rememberMe');
+        }
         
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         
@@ -142,8 +152,11 @@ export const useAuthStore = defineStore('auth', {
       this.user = null;
       this.token = null;
       this.isAuthenticated = false;
+      this.rememberMe = false;
       
+      // 清除所有存儲的認證信息
       localStorage.removeItem('token');
+      sessionStorage.removeItem('token');
       delete axios.defaults.headers.common['Authorization'];
       
       const toast = useToast();

@@ -24,6 +24,7 @@
     "src/**/*.js",
     "src/**/*.ts",
     "src/**/*.vue",
-    "src/**/*.json"
+    "src/**/*.json",
+    "src/views/admin/categories/CategoryListView.view"
   ]
 } 

@@ -10,7 +10,7 @@
         >
           <v-card class="login-card">
             <v-card-title class="text-center py-4">
-              <h1 class="text-h4 font-weight-bold primary--text">TRiPEAK B2B</h1>
+              <h1 class="text-h4 font-weight-bold primary--text">{{ MERCHANT_NAME }}</h1>
             </v-card-title>
             
             <v-card-subtitle class="text-center mb-4">
@@ -103,15 +103,16 @@
 import { ref, reactive, computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
-
+import { useToast } from 'vue-toastification';
+import { MERCHANT_NAME } from '@/config';
 // 路由
 const router = useRouter();
 const route = useRoute();
 
 // 表單數據
-const email = ref('');
+const email = ref(localStorage.getItem('email') || '');
 const password = ref('');
-const rememberMe = ref(false);
+const rememberMe = ref(localStorage.getItem('rememberMe') === 'true');
 const showPassword = ref(false);
 const form = ref(null);
 const error = ref('');
@@ -136,8 +137,22 @@ const handleLogin = async () => {
   
   try {
     error.value = '';
-    await authStore.login({ email: email.value, password: password.value });
+    await authStore.login({ 
+      email: email.value, 
+      password: password.value,
+      rememberMe: rememberMe.value 
+    });
     
+    // 如果選擇記住我，保存 email
+    if (rememberMe.value) {
+      localStorage.setItem('email', email.value);
+      localStorage.setItem('rememberMe', 'true');
+    } else {
+      // 如果取消記住我，清除保存的 email
+      localStorage.removeItem('email');
+      localStorage.removeItem('rememberMe');
+    }
+
     // 登入成功，重定向
     const redirectPath = route.query.redirect || '/dashboard';
     router.push(redirectPath);

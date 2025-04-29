@@ -12,7 +12,7 @@
         <!-- 品牌 Logo -->
         <div class="d-flex align-center justify-center py-4">
           <div v-if="!miniVariant" class="text-h5 font-weight-bold text-primary">
-            TRiPEAK B2B
+            {{ MERCHANT_NAME }}
           </div>
           <v-avatar v-else color="primary" size="40">
             <span class="text-h6 white--text">TP</span>
@@ -39,12 +39,12 @@
 
         <!-- 底部選單 -->
         <v-list nav>
-          <v-list-item
+          <!-- <v-list-item
             prepend-icon="mdi-cog"
             :title="miniVariant ? '' : '設定'"
             to="/settings"
             value="settings"
-          ></v-list-item>
+          ></v-list-item> -->
           <v-list-item
             prepend-icon="mdi-account"
             :title="miniVariant ? '' : '個人資料'"
@@ -168,6 +168,7 @@ import { useRouter, useRoute } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 import { useUiStore } from '@/stores/ui';
 import { useDisplay, useTheme } from 'vuetify';
+import { MERCHANT_NAME } from '@/config';
 
 // 存取 Store
 const authStore = useAuthStore();
@@ -199,7 +200,7 @@ const userInitials = computed(() => {
     .substring(0, 2);
 });
 const userDisplayName = computed(() => {
-  return user.value?.name || '用戶';
+  return user.value.data?.contactName || '用戶';
 });
 const isMobile = computed(() => mobile.value);
 const fullscreenRoute = computed(() => {
@@ -208,8 +209,7 @@ const fullscreenRoute = computed(() => {
 
 // 菜單項目
 const menuItems = computed(() => {
-  const isAdmin = user.value?.role === 'admin';
-  
+  const isAdmin = user.value.data?.role === 'admin';
   // 基本菜單項目（所有用戶）
   const items = [
     { title: '儀表板', icon: 'mdi-view-dashboard', to: '/dashboard' },
@@ -247,14 +247,14 @@ onMounted(async () => {
   // 設定主題
   theme.global.name.value = themeMode.value;
   
-  // 檢查登入狀態
-  if (authStore.token && !authStore.user) {
+  // 檢查是否有存儲的 token
+  const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+  if (token) {
     try {
       await authStore.fetchCurrentUser();
     } catch (error) {
-      console.error('獲取用戶信息失敗', error);
+      console.error('自動登入失敗:', error);
       authStore.logout();
-      router.push('/login');
     }
   }
 });
