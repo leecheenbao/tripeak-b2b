@@ -16,9 +16,17 @@ exports.getUsers = async (req, res) => {
     if (req.query.isActive) {
       filter.isActive = req.query.isActive === 'true';
     }
+    if (req.query.search) {
+      filter.name = { $regex: req.query.search, $options: 'i' };
+    }
+
+    // 分頁條件
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
 
     // 查詢用戶
-    const users = await User.find(filter).sort({ createdAt: -1 });
+    const users = await User.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit);
 
     res.status(200).json({
       success: true,

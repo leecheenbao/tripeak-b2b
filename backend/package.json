@@ -4,7 +4,7 @@
   "description": "TRiPEAK B2B 經銷商下單平台後端",
   "main": "src/server.js",
   "scripts": {
-    "start": "node src/server.js",
+    "start": "nodemon src/server.js",
     "dev": "nodemon src/server.js",
     "seed": "node src/utils/seeder.js",
     "test": "echo \"Error: no test specified\" && exit 1"
