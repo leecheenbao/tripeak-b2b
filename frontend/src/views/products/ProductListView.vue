@@ -2,7 +2,9 @@
   <div class="products-page">
     <v-container>
       <div class="d-flex align-center justify-space-between mb-6">
-        <h1 class="text-h4 font-weight-bold">產品目錄</h1>
+        <h1 class="text-h4 font-weight-bold">
+          產品目錄
+        </h1>
         <div class="d-flex align-center">
           <v-text-field
             v-model="searchQuery"
@@ -14,12 +16,12 @@
             class="mr-2"
             style="width: 220px;"
             @update:model-value="handleSearch"
-          ></v-text-field>
+          />
           <v-btn
             color="primary"
             variant="text"
-            @click="refreshProducts"
             :loading="loading"
+            @click="refreshProducts"
           >
             <v-icon>mdi-refresh</v-icon>
           </v-btn>
@@ -51,7 +53,7 @@
             <v-card-title class="text-subtitle-1 font-weight-bold">
               分類
             </v-card-title>
-            <v-divider></v-divider>
+            <v-divider />
             <v-list>
               <v-list-item
                 v-for="category in categories"
@@ -62,25 +64,24 @@
                 @click="selectCategory(category.id)"
               >
                 <v-list-item-title>{{ category.name }}</v-list-item-title>
-                <template v-slot:append>
+                <template #append>
                   <v-badge
                     :content="category.count"
                     color="primary"
                     inline
-                  ></v-badge>
+                  />
                 </template>
               </v-list-item>
             </v-list>
 
-            <v-divider class="my-2"></v-divider>
+            <v-divider class="my-2" />
             
             <v-card-title class="text-subtitle-1 font-weight-bold">
               價格區間
             </v-card-title>
             <v-card-text>
               <div class="price-range-container">
-                <div class="d-flex align-center mb-10">
-                </div>
+                <div class="d-flex align-center mb-10" />
                 <v-range-slider
                   v-model="priceRange"
                   :min="0"
@@ -93,17 +94,13 @@
                   class="mb-4"
                   @update:model-value="handlePriceFilter"
                 >
-                <template v-slot:prepend>
-                  
-                </template>
-                <template v-slot:append>
-                  
-                </template>
-              </v-range-slider>
-            </div>
+                  <template #prepend />
+                  <template #append />
+                </v-range-slider>
+              </div>
             </v-card-text>
 
-            <v-divider class="my-2"></v-divider>
+            <v-divider class="my-2" />
             
             <v-card-actions>
               <v-btn
@@ -131,12 +128,14 @@
             color="grey-lighten-4"
             style="padding: 12px;"
           >
-            <div class="text-body-1 font-weight-medium">共 {{ products.length }} 件商品</div>
+            <div class="text-body-1 font-weight-medium">
+              共 {{ products.length }} 件商品
+            </div>
             <v-btn
               prepend-icon="mdi-filter-variant"
-              @click="showFilterDialog = true"
               color="primary"
               variant="text"
+              @click="showFilterDialog = true"
             >
               篩選
             </v-btn>
@@ -149,7 +148,7 @@
               size="50"
               color="primary"
               class="mb-3"
-            ></v-progress-circular>
+            />
             <div>載入產品資訊...</div>
           </v-sheet>
           
@@ -159,8 +158,12 @@
               size="64"
               color="grey-lighten-1"
               class="mb-3"
-            >mdi-shopping-outline</v-icon>
-            <div class="text-h6 text-grey">沒有找到符合條件的產品</div>
+            >
+              mdi-shopping-outline
+            </v-icon>
+            <div class="text-h6 text-grey">
+              沒有找到符合條件的產品
+            </div>
           </v-sheet>
           
           <!-- 網格視圖 -->
@@ -177,10 +180,11 @@
                 :to="{ name: 'ProductDetail', params: { id: product.id } }"
               >
                 <v-img
-                  :src="product.image"
+                  :src="getProductImageUrl(product)"
                   height="200"
                   cover
                   class="align-end"
+                  @error="event => event.target.src = '/default-image.png'"
                 >
                   <v-chip
                     v-if="product.discount"
@@ -202,7 +206,7 @@
                     <div class="text-subtitle-1 font-weight-bold primary--text">
                       NT$ {{ product.price.toLocaleString() }}
                     </div>
-                    <v-spacer></v-spacer>
+                    <v-spacer />
                     <v-rating
                       :model-value="product.rating"
                       color="amber"
@@ -210,10 +214,10 @@
                       size="small"
                       readonly
                       half-increments
-                    ></v-rating>
+                    />
                   </v-row>
                 </v-card-text>
-                <v-divider></v-divider>
+                <v-divider />
                 <v-card-actions>
                   <v-btn
                     variant="text"
@@ -222,7 +226,7 @@
                   >
                     加入購物車
                   </v-btn>
-                  <v-spacer></v-spacer>
+                  <v-spacer />
                   <v-btn
                     icon
                     variant="text"
@@ -244,13 +248,13 @@
                 :key="product.id"
                 :to="{ name: 'ProductDetail', params: { id: product.id } }"
               >
-                <template v-slot:prepend>
+                <template #prepend>
                   <v-avatar
                     size="80"
                     rounded
                     class="me-4"
                   >
-                    <v-img :src="product.image" cover></v-img>
+                    <v-img :src="getProductImageUrl(product)" cover />
                   </v-avatar>
                 </template>
                 <v-list-item-title class="text-subtitle-1 font-weight-medium mb-1">
@@ -266,7 +270,7 @@
                     mdi-star
                   </v-icon>
                 </v-list-item-subtitle>
-                <template v-slot:append>
+                <template #append>
                   <div class="d-flex flex-column align-end">
                     <div class="text-subtitle-1 font-weight-bold primary--text mb-2">
                       NT$ {{ product.price.toLocaleString() }}
@@ -294,7 +298,7 @@
               :total-visible="7"
               rounded="circle"
               @update:model-value="fetchProducts"
-            ></v-pagination>
+            />
           </div>
         </v-col>
       </v-row>
@@ -315,7 +319,7 @@
             <v-icon>mdi-close</v-icon>
           </v-btn>
           <v-toolbar-title>篩選產品</v-toolbar-title>
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-toolbar-items>
             <v-btn
               variant="text"
@@ -335,29 +339,29 @@
             active-color="primary"
             @click="selectCategory(category.id)"
           >
-            <template v-slot:prepend>
+            <template #prepend>
               <v-checkbox-btn
                 :model-value="selectedCategory === category.id"
                 color="primary"
-              ></v-checkbox-btn>
+              />
             </template>
             <v-list-item-title>{{ category.name }}</v-list-item-title>
-            <template v-slot:append>
+            <template #append>
               <v-badge
                 :content="category.count"
                 color="primary"
                 inline
-              ></v-badge>
+              />
             </template>
           </v-list-item>
-          <v-divider></v-divider>
+          <v-divider />
           <v-list-subheader>價格區間111</v-list-subheader>
           <v-list-item>
             <v-card-text>
               <div class="price-range-container">
                 <div class="d-flex align-center mb-2">
                   <span class="text-subtitle-2">價格區間</span>
-                  <v-spacer></v-spacer>
+                  <v-spacer />
                   <span class="text-caption text-grey">
                     NT$ {{ priceRange[0].toLocaleString() }} - NT$ {{ priceRange[1].toLocaleString() }}
                   </span>
@@ -374,7 +378,7 @@
                   class="mb-4"
                   @update:model-value="handlePriceFilter"
                 >
-                  <template v-slot:prepend>
+                  <template #prepend>
                     <v-text-field
                       v-model="priceRange[0]"
                       type="number"
@@ -386,9 +390,9 @@
                       prefix="NT$"
                       class="price-input"
                       @update:model-value="setPriceRange"
-                    ></v-text-field>
+                    />
                   </template>
-                  <template v-slot:append>
+                  <template #append>
                     <v-text-field
                       v-model="priceRange[1]"
                       type="number"
@@ -400,14 +404,14 @@
                       prefix="NT$"
                       class="price-input"
                       @update:model-value="setPriceRange"
-                    ></v-text-field>
+                    />
                   </template>
                 </v-range-slider>
               </div>
             </v-card-text>
           </v-list-item>
         </v-list>
-        <v-divider></v-divider>
+        <v-divider />
         <v-card-actions>
           <v-btn
             color="primary"
@@ -428,12 +432,12 @@
       timeout="3000"
     >
       {{ snackbar.text }}
-      <template v-slot:actions>
+      <template #actions>
         <v-btn
           variant="text"
           icon="mdi-close"
           @click="snackbar.show = false"
-        ></v-btn>
+        />
       </template>
     </v-snackbar>
   </div>
@@ -524,7 +528,7 @@ const fetchCategories = async () => {
   }
 };
 
-const selectCategory = (categoryId) => {
+const selectCategory = categoryId => {
   selectedCategory.value = categoryId === 'all' ? null : categoryId;
   page.value = 1; // 重置頁碼
   fetchProducts({
@@ -568,12 +572,16 @@ const refreshProducts = () => {
   fetchProducts();
 };
 
-const addToCart = (product) => {
+const addToCart = product => {
   uiStore.addToCart(product);
   
   snackbar.text = `已將 ${product.name} 加入購物車`;
   snackbar.color = 'success';
   snackbar.show = true;
+};
+
+const getProductImageUrl = product => {
+  return product._id ? `/api/products/${product._id}/image` : '/default-image.png';
 };
 
 // 生命週期鉤子

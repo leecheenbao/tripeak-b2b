@@ -230,7 +230,7 @@ const menuItems = computed(() => {
       { title: '訂單管理', icon: 'mdi-cart', to: '/admin/orders' },
       { title: '分類管理', icon: 'mdi-shape', to: '/admin/categories' },
       { title: '報表分析', icon: 'mdi-chart-bar', to: '/admin/reports' },
-      { title: 'LINE 通知', icon: 'mdi-message-text', to: '/admin/line-messages' }
+      { title: 'LINE 通知', icon: 'mdi-message-text', to: '/admin/line-notify' }
     );
   }
   

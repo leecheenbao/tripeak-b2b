@@ -48,7 +48,11 @@
                     rounded
                     class="me-4"
                   >
-                    <v-img :src="item.imageUrl" cover></v-img>
+                    <v-img
+                      :src="getProductImageUrl(item)"
+                      cover
+                      @error="event => event.target.src = '/images/no-image.jpg'"
+                    ></v-img>
                   </v-avatar>
                 </template>
 
@@ -170,6 +174,10 @@ const confirmClearCart = () => {
   cartStore.clearCart();
   showConfirmDialog.value = false;
   toast.success('購物車已清空');
+};
+
+const getProductImageUrl = (item) => {
+  return item && item._id ? `/api/products/${item._id}/image` : '/images/no-image.jpg';
 };
 </script>
 

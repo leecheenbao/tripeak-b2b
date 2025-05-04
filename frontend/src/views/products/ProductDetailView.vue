@@ -35,10 +35,11 @@
         <v-col cols="12" md="6">
           <v-card class="product-images">
             <v-img
-              :src="product.imageUrl || '/images/no-image.jpg'"
+              :src="getProductImageUrl(product)"
               height="400"
               cover
               class="align-end"
+              @error="event => event.target.src = '/images/no-image.jpg'"
             >
             </v-img>
           </v-card>
@@ -192,7 +193,6 @@ import { useRoute, useRouter } from 'vue-router';
 import { productsApi } from '@/api';
 import { useCartStore } from '@/stores/cart';
 import { useToast } from 'vue-toastification';
-import CartIcon from '@/components/CartIcon.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -235,6 +235,10 @@ const addToCart = () => {
   cartStore.addItem(product.value, quantity.value);
   toast.success(`已將 ${product.value.name} 加入購物車`);
   addingToCart.value = false;
+};
+
+const getProductImageUrl = (product) => {
+  return product && product._id ? `/api/products/${product._id}/image` : '/images/no-image.jpg';
 };
 
 onMounted(() => {

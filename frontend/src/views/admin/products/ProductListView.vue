@@ -80,7 +80,11 @@
           <!-- 產品圖片 -->
           <template v-slot:item.image="{ item }">
             <v-avatar size="40" rounded>
-              <v-img :src="item.imageUrl || '/images/no-image.jpg'" cover></v-img>
+              <v-img
+                :src="getProductImageUrl(item)"
+                cover
+                @error="event => event.target.src = '/images/no-image.jpg'"
+              ></v-img>
             </v-avatar>
           </template>
 
@@ -583,6 +587,8 @@ const updateStock = async (item) => {
     fetchProducts();
   }
 };
+
+const getProductImageUrl = (item) => `/api/products/${item._id}/image`;
 
 // 生命週期鉤子
 onMounted(() => {

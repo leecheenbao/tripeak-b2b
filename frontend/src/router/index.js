@@ -31,8 +31,7 @@ const AdminCategoryList = () => import('@/views/admin/categories/CategoryListVie
 const AdminOrderList = () => import('@/views/admin/orders/OrderAdminListView.vue');
 const AdminOrderDetail = () => import('@/views/admin/orders/OrderDetailView.vue');
 const AdminReports = () => import('@/views/admin/reports/ReportsView.vue');
-const AdminLineMessages = () => import('@/views/admin/line/LineMessagesView.vue');
-// const Profile = () => import('@/views/profile/ProfileView.vue');
+const AdminLineNotify = () => import('@/views/admin/line/LineNotifyView.vue');
 
 // 路由配置
 const routes = [
@@ -176,10 +175,10 @@ const routes = [
   },
   // LINE消息管理
   {
-    path: '/admin/line-messages',
-    name: 'AdminLineMessages',
-    component: AdminLineMessages,
-    meta: { requiresAuth: true, requiresAdmin: true, title: 'LINE 通知管理' }
+    path: '/admin/line-notify',
+    name: 'AdminLineNotify',
+    component: AdminLineNotify,
+    meta: { requiresAuth: true, requiresAdmin: true, title: 'LINE 通知設定' }
   },
   
   // 購物車頁面
