@@ -93,8 +93,6 @@ exports.getOrder = async (req, res) => {
       select: 'name companyName phone email address lineId'
     });
 
-    // 加入顯示  資訊
-    console.log(order);
     if (!order) {
       return res.status(404).json({
         success: false,
