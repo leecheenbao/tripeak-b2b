@@ -3,6 +3,11 @@ const Category = require('../models/Category');
 const logger = require('../utils/logger');
 const path = require('path');
 const fs = require('fs');
+const express = require('express');
+const fileUpload = require('express-fileupload');
+
+const app = express();
+app.use(fileUpload());
 
 /**
  * @desc    獲取所有產品
@@ -79,8 +84,9 @@ exports.getProducts = async (req, res) => {
         sort = { displayOrder: 1, name: 1 };
     }
 
-    // 執行查詢
+    // 執行查詢 - 忽略 image 欄位
     const products = await Product.find(filter)
+      .select('-image') // 忽略 image 欄位
       .populate('category', 'name')
       .sort(sort)
       .skip(skip)
@@ -347,43 +353,38 @@ exports.uploadProductImage = async (req, res) => {
       });
     }
 
-    // 創建自定義文件名
-    const filename = `product_${product._id}${path.parse(file.name).ext}`;
-    
-    // 移動文件到上傳路徑
-    file.mv(`${process.env.FILE_UPLOAD_PATH}/products/${filename}`, async err => {
-      if (err) {
-        logger.error(`圖片上傳失敗: ${err.message}`);
-        return res.status(500).json({
-          success: false,
-          error: '圖片上傳失敗'
-        });
+    // 將圖片 buffer 及 mimetype 存入資料庫
+    product.image = file.data; // file.data 為 Buffer
+    product.imageType = file.mimetype;
+    await product.save();
+
+    res.status(200).json({
+      success: true,
+      data: {
+        message: '圖片已儲存於資料庫'
       }
-
-      // 如果產品已有圖片，刪除舊圖片
-      if (product.imageUrl !== 'no-image.jpg') {
-        try {
-          fs.unlinkSync(`${process.env.FILE_UPLOAD_PATH}/products/${product.imageUrl}`);
-        } catch (unlinkErr) {
-          logger.error(`刪除舊圖片失敗: ${unlinkErr.message}`);
-        }
-      }
-
-      // 更新產品圖片路徑
-      await Product.findByIdAndUpdate(req.params.id, { imageUrl: filename });
-
-      res.status(200).json({
-        success: true,
-        data: {
-          filename
-        }
-      });
     });
   } catch (err) {
     logger.error(`上傳產品圖片失敗: ${err.message}`);
+    console.log(err)
     res.status(500).json({
       success: false,
       error: '上傳產品圖片失敗'
     });
+  }
+};
+
+// 取得產品圖片
+exports.getProductImage = async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+    if (!product || !product.image) {
+      // 沒有圖片時回傳 404
+      return res.status(404).send('找不到圖片');
+    }
+    res.set('Content-Type', product.imageType);
+    res.send(product.image);
+  } catch (err) {
+    res.status(500).send('讀取圖片失敗');
   }
 };

@@ -32,6 +32,14 @@ const ProductSchema = new mongoose.Schema(
       type: String,
       default: 'no-image.jpg'
     },
+    image: {
+      type: Buffer,
+      default: null
+    },
+    imageType: {
+      type: String,
+      default: null
+    },
     category: {
       type: mongoose.Schema.ObjectId,
       ref: 'Category',

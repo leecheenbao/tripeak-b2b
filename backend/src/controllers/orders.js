@@ -153,7 +153,6 @@ exports.createOrder = async (req, res) => {
     // 查詢產品詳情
     const products = await Product.find({ _id: { $in: productIds } });
 
-    console.log(products);
     // 確保所有產品都存在且激活
     if (products.length !== productIds.length) {
       return res.status(400).json({

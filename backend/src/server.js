@@ -5,6 +5,7 @@ const morgan = require('morgan');
 const connectDB = require('./config/db');
 const errorHandler = require('./middleware/error');
 const logger = require('./utils/logger');
+const fileUpload = require('express-fileupload');
 
 // 載入環境變數
 dotenv.config();
@@ -18,6 +19,7 @@ const app = express();
 // 中間件設置
 app.use(express.json());
 app.use(cors());
+app.use(fileUpload());
 
 // 日誌設置
 if (process.env.NODE_ENV === 'development') {

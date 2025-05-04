@@ -5,7 +5,8 @@ const {
   createProduct,
   updateProduct,
   deleteProduct,
-  uploadProductImage
+  uploadProductImage,
+  getProductImage
 } = require('../controllers/products');
 const { protect, authorize } = require('../middleware/auth');
 
@@ -14,6 +15,7 @@ const router = express.Router();
 // 公開路由
 router.get('/', getProducts);
 router.get('/:id', getProduct);
+router.get('/:id/image', getProductImage);
 
 // 保護路由（需要登錄和管理員權限）
 router.use(protect);
