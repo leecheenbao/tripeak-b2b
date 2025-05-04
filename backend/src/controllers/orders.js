@@ -93,6 +93,8 @@ exports.getOrder = async (req, res) => {
       select: 'name companyName phone email address lineId'
     });
 
+    // 加入顯示  資訊
+    console.log(order);
     if (!order) {
       return res.status(404).json({
         success: false,
@@ -128,8 +130,17 @@ exports.getOrder = async (req, res) => {
  */
 exports.createOrder = async (req, res) => {
   try {
-    const { items, note, shippingAddress } = req.body;
+    const { items, note, recipient } = req.body;
 
+    // 檢查聯絡人資訊
+    if (recipient) {
+      if (!recipient.name || !recipient.phone || !recipient.address) {
+        return res.status(400).json({
+          success: false,
+          error: '聯絡人資訊不完整'
+        });
+      }
+    }
     // 確保訂單包含產品
     if (!items || items.length === 0) {
       return res.status(400).json({
@@ -139,11 +150,12 @@ exports.createOrder = async (req, res) => {
     }
 
     // 提取產品 ID
-    const productIds = items.map(item => item.product);
+    const productIds = items.map(item => item._id);
 
     // 查詢產品詳情
     const products = await Product.find({ _id: { $in: productIds } });
 
+    console.log(products);
     // 確保所有產品都存在且激活
     if (products.length !== productIds.length) {
       return res.status(400).json({
@@ -157,7 +169,7 @@ exports.createOrder = async (req, res) => {
     let totalAmount = 0;
 
     for (const item of items) {
-      const product = products.find(p => p._id.toString() === item.product.toString());
+      const product = products.find(p => p._id.toString() === item._id.toString());
       
       // 確認產品激活
       if (!product.isActive) {
@@ -180,13 +192,17 @@ exports.createOrder = async (req, res) => {
       });
     }
 
+    // 創建訂單編號
+    const orderNumber = await Order.countDocuments({}) + 1;
+
     // 創建訂單
     const order = await Order.create({
+      orderNumber: orderNumber,
       dealer: req.user._id,
       items: orderItems,
       totalAmount,
       note,
-      shippingAddress: shippingAddress || req.user.address
+      recipient
     });
 
     // 查詢完整訂單信息
@@ -225,7 +241,7 @@ exports.updateOrderStatus = async (req, res) => {
     const { status } = req.body;
 
     // 驗證狀態值
-    const validStatuses = ['pending', 'processing', 'shipped', 'completed', 'cancelled'];
+    const validStatuses = ['pending', 'processing', 'shipped', 'completed', 'paid', 'cancelled'];
     if (!validStatuses.includes(status)) {
       return res.status(400).json({
         success: false,
@@ -296,11 +312,11 @@ exports.updateOrderStatus = async (req, res) => {
  */
 exports.updateOrder = async (req, res) => {
   try {
-    const { note, shippingAddress } = req.body;
+    const { note, recipient } = req.body;
 
     const fieldsToUpdate = {
       note,
-      shippingAddress
+      recipient
     };
 
     // 過濾掉未提供的欄位
