@@ -27,12 +27,8 @@ async function queryProducts(req, isAdmin = false) {
   }
 
   // 狀態篩選
-  if (isAdmin) {
-    if (req.query.isActive) {
-      filter.isActive = req.query.isActive === 'true';
-    }
-  } else {
-    filter.isActive = true;
+  if (req.query.isActive) {
+    filter.isActive = req.query.isActive === 'true';
   }
 
   // 關鍵字搜尋
@@ -130,6 +126,7 @@ exports.getProducts = async (req, res) => {
  */
 exports.getAdminProducts = async (req, res) => {
   try {
+    console.log(req.query)
     const { products, total, page, limit } = await queryProducts(req, true);
     res.status(200).json({
       success: true,
