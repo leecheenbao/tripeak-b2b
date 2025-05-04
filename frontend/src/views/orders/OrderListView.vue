@@ -68,7 +68,6 @@ const getStatusColor = status => {
 };
   
 const getStatusText = status => {
-  console.log(status);
   const statusMap = {
     pending: '待匯款',
     paid: '已收款',

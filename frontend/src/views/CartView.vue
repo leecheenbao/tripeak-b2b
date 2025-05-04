@@ -2,7 +2,9 @@
   <div class="cart-page">
     <v-container>
       <div class="d-flex align-center justify-space-between mb-6">
-        <h1 class="text-h4 font-weight-bold">購物車</h1>
+        <h1 class="text-h4 font-weight-bold">
+          購物車
+        </h1>
         <v-btn
           v-if="cartStore.items.length"
           color="error"
@@ -22,8 +24,12 @@
           size="64"
           color="grey-lighten-1"
           class="mb-3"
-        >mdi-cart-outline</v-icon>
-        <div class="text-h6 text-grey mb-4">購物車是空的</div>
+        >
+          mdi-cart-outline
+        </v-icon>
+        <div class="text-h6 text-grey mb-4">
+          購物車是空的
+        </div>
         <v-btn
           color="primary"
           to="/products"
@@ -42,7 +48,7 @@
                 :key="item._id"
                 class="cart-item"
               >
-                <template v-slot:prepend>
+                <template #prepend>
                   <v-avatar
                     size="80"
                     rounded
@@ -52,7 +58,7 @@
                       :src="getProductImageUrl(item)"
                       cover
                       @error="event => event.target.src = '/images/no-image.jpg'"
-                    ></v-img>
+                    />
                   </v-avatar>
                 </template>
 
@@ -63,7 +69,7 @@
                   {{ item.category.name }} | {{ item.sku }}
                 </v-list-item-subtitle>
 
-                <template v-slot:append>
+                <template #append>
                   <div class="d-flex align-center">
                     <div class="text-subtitle-1 font-weight-bold primary--text me-4">
                       NT$ {{ (item.price * item.quantity).toLocaleString() }}
@@ -89,7 +95,7 @@
             <v-card-title class="text-subtitle-1 font-weight-medium">
               訂單摘要
             </v-card-title>
-            <v-divider></v-divider>
+            <v-divider />
             <v-card-text>
               <div class="d-flex justify-space-between mb-2">
                 <span>商品總數</span>
@@ -102,7 +108,7 @@
                 </span>
               </div>
             </v-card-text>
-            <v-divider></v-divider>
+            <v-divider />
             <v-card-actions>
               <v-btn
                 color="primary"
@@ -123,12 +129,14 @@
       max-width="400px"
     >
       <v-card>
-        <v-card-title class="text-h5">確認清空購物車</v-card-title>
+        <v-card-title class="text-h5">
+          確認清空購物車
+        </v-card-title>
         <v-card-text>
           您確定要清空購物車嗎？此操作無法撤銷。
         </v-card-text>
         <v-card-actions>
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
             color="grey-darken-1"
             variant="text"
@@ -159,7 +167,7 @@ const toast = useToast();
 const showConfirmDialog = ref(false);
 
 // 移除商品
-const removeItem = (productId) => {
+const removeItem = productId => {
   cartStore.removeItem(productId);
   toast.success('商品已從購物車移除');
 };
@@ -176,7 +184,7 @@ const confirmClearCart = () => {
   toast.success('購物車已清空');
 };
 
-const getProductImageUrl = (item) => {
+const getProductImageUrl = item => {
   return item && item._id ? `/api/products/${item._id}/image` : '/images/no-image.jpg';
 };
 </script>

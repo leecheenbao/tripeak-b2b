@@ -1,3 +1,4 @@
+<!-- eslint-disable max-len -->
 <template>
   <div class="products-page">
     <v-container>
@@ -444,7 +445,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
 import { useUiStore } from '@/stores/ui';
 import { productsApi, categoriesApi } from '@/api';
 import { useToast } from 'vue-toastification';

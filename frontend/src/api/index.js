@@ -234,6 +234,11 @@ export const productsApi = {
         'Content-Type': 'multipart/form-data'
       }
     });
+  },
+
+  // 獲取所有產品 (管理員)
+  getAdminProducts(params) {
+    return apiClient.get('/products/getAll/admin', { params });
   }
 };
 

@@ -1,12 +1,12 @@
 <template>
   <v-app :theme="themeMode">
     <v-navigation-drawer
+      v-if="isLoggedIn"
       v-model="drawer"
       :rail="miniVariant"
       permanent
       :temporary="isMobile"
       @click="handleDrawerClick"
-      v-if="isLoggedIn"
     >
       <div class="d-flex flex-column fill-height">
         <!-- 品牌 Logo -->
@@ -19,7 +19,7 @@
           </v-avatar>
         </div>
 
-        <v-divider></v-divider>
+        <v-divider />
 
         <!-- 導航選單 -->
         <v-list nav>
@@ -31,11 +31,10 @@
             :to="item.to"
             :disabled="item.disabled"
             :value="item.title"
-          >
-          </v-list-item>
+          />
         </v-list>
 
-        <v-spacer></v-spacer>
+        <v-spacer />
 
         <!-- 底部選單 -->
         <v-list nav>
@@ -50,22 +49,22 @@
             :title="miniVariant ? '' : '個人資料'"
             to="/profile"
             value="profile"
-          ></v-list-item>
+          />
           <v-list-item
             prepend-icon="mdi-logout"
             :title="miniVariant ? '' : '登出'"
-            @click="logout"
             value="logout"
-          ></v-list-item>
+            @click="logout"
+          />
         </v-list>
 
         <!-- 摺疊按鈕 -->
         <div class="d-flex justify-center pa-2">
           <v-btn 
             icon 
-            @click.stop="toggleMiniVariant" 
             variant="text" 
-            size="small"
+            size="small" 
+            @click.stop="toggleMiniVariant"
           >
             <v-icon>{{ miniVariant ? 'mdi-chevron-right' : 'mdi-chevron-left' }}</v-icon>
           </v-btn>
@@ -74,20 +73,20 @@
     </v-navigation-drawer>
 
     <!-- 應用程式頂欄 -->
-    <v-app-bar :elevation="1" color="background" v-if="isLoggedIn">
+    <v-app-bar v-if="isLoggedIn" :elevation="1" color="background">
       <!-- 手機版選單按鈕 -->
       <v-app-bar-nav-icon 
         v-if="isMobile" 
         @click.stop="drawer = !drawer"
-      ></v-app-bar-nav-icon>
+      />
       
-      <v-spacer></v-spacer>
+      <v-spacer />
       
       <CartIcon class="mr-2" />
       
       <!-- 使用者選單 -->
       <v-menu min-width="200px" rounded>
-        <template v-slot:activator="{ props }">
+        <template #activator="{ props }">
           <v-btn
             variant="text"
             v-bind="props"
@@ -96,7 +95,9 @@
               <span class="text-h6 white--text">{{ userInitials }}</span>
             </v-avatar>
             {{ userDisplayName }}
-            <v-icon right>mdi-chevron-down</v-icon>
+            <v-icon right>
+              mdi-chevron-down
+            </v-icon>
           </v-btn>
         </template>
         <v-card>
@@ -104,22 +105,21 @@
             {{ user?.name || '使用者' }}
           </v-card-title>
           <v-card-subtitle>{{ user?.email }}</v-card-subtitle>
-          <v-divider></v-divider>
           <v-list>
             <v-list-item to="/profile">
-              <template v-slot:prepend>
+              <template #prepend>
                 <v-icon>mdi-account</v-icon>
               </template>
               <v-list-item-title>個人資料</v-list-item-title>
             </v-list-item>
             <v-list-item @click="toggleTheme">
-              <template v-slot:prepend>
+              <template #prepend>
                 <v-icon>{{ themeIcon }}</v-icon>
               </template>
               <v-list-item-title>{{ themeMode === 'dark' ? '淺色模式' : '深色模式' }}</v-list-item-title>
             </v-list-item>
             <v-list-item @click="logout">
-              <template v-slot:prepend>
+              <template #prepend>
                 <v-icon>mdi-logout</v-icon>
               </template>
               <v-list-item-title>登出</v-list-item-title>
@@ -155,7 +155,7 @@
         :width="7" 
         color="primary" 
         indeterminate
-      ></v-progress-circular>
+      />
       <div class="text-center mt-4">
         {{ loading.message || '載入中...' }}
       </div>
@@ -238,7 +238,7 @@ const menuItems = computed(() => {
 });
 
 // 監聽器
-watch(mobile, (newValue) => {
+watch(mobile, newValue => {
   if (newValue) {
     drawer.value = false;
     miniVariant.value = false;

@@ -423,8 +423,6 @@ const saveUser = async () => {
   try {
     if (isEdit.value) {
       // 更新用戶
-
-      console.log(editedItem.value.isActive);
       await usersApi.updateUser(editedItem.value._id, {
         companyName: editedItem.value.companyName,
         contactName: editedItem.value.contactName,

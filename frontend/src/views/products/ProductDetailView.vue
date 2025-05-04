@@ -8,7 +8,7 @@
           size="50"
           color="primary"
           class="mb-3"
-        ></v-progress-circular>
+        />
         <div>載入產品資訊...</div>
       </v-sheet>
 
@@ -18,8 +18,12 @@
           size="64"
           color="grey-lighten-1"
           class="mb-3"
-        >mdi-alert-circle-outline</v-icon>
-        <div class="text-h6 text-grey">找不到產品</div>
+        >
+          mdi-alert-circle-outline
+        </v-icon>
+        <div class="text-h6 text-grey">
+          找不到產品
+        </div>
         <v-btn
           color="primary"
           class="mt-4"
@@ -40,15 +44,16 @@
               cover
               class="align-end"
               @error="event => event.target.src = '/images/no-image.jpg'"
-            >
-            </v-img>
+            />
           </v-card>
         </v-col>
 
         <!-- 右側產品資訊 -->
         <v-col cols="12" md="6">
           <div class="product-info">
-            <h1 class="text-h4 font-weight-bold mb-2">{{ product.name }}</h1>
+            <h1 class="text-h4 font-weight-bold mb-2">
+              {{ product.name }}
+            </h1>
             <!-- <div class="text-subtitle-1 text-grey mb-4">{{ product.category.name }}</div> -->
             
             <!-- 價格 -->
@@ -60,7 +65,9 @@
 
             <!-- 數量選擇 -->
             <div class="quantity-section mb-6">
-              <div class="text-subtitle-1 font-weight-medium mb-2">數量</div>
+              <div class="text-subtitle-1 font-weight-medium mb-2">
+                數量
+              </div>
               <div class="d-flex align-center">
                 <v-btn
                   icon
@@ -79,7 +86,7 @@
                   style="width: 80px"
                   :min="1"
                   :max="product.stockQuantity"
-                ></v-text-field>
+                />
                 <v-btn
                   icon
                   variant="text"
@@ -104,7 +111,9 @@
                 :disabled="quantity <= 0"
                 @click="addToCart"
               >
-                <v-icon start>mdi-cart-plus</v-icon>
+                <v-icon start>
+                  mdi-cart-plus
+                </v-icon>
                 加入購物車
               </v-btn>
             </div>
@@ -114,8 +123,8 @@
               color="blue"
               size="large"
               block
-              @click="addToCart"
               to="/cart"
+              @click="addToCart"
             >
               前往結帳
             </v-btn>
@@ -134,29 +143,29 @@
                 <v-expansion-panel-text>
                   <v-list>
                     <v-list-item>
-                      <template v-slot:prepend>
+                      <template #prepend>
                         <v-icon>mdi-barcode</v-icon>
                       </template>
                       <v-list-item-title>商品編號</v-list-item-title>
-                      <template v-slot:append>
+                      <template #append>
                         {{ product.sku }}
                       </template>
                     </v-list-item>
                     <v-list-item>
-                      <template v-slot:prepend>
+                      <template #prepend>
                         <v-icon>mdi-package-variant</v-icon>
                       </template>
                       <v-list-item-title>單位</v-list-item-title>
-                      <template v-slot:append>
+                      <template #append>
                         {{ product.unit }}
                       </template>
                     </v-list-item>
                     <v-list-item>
-                      <template v-slot:prepend>
+                      <template #prepend>
                         <v-icon>mdi-calendar</v-icon>
                       </template>
                       <v-list-item-title>上架日期</v-list-item-title>
-                      <template v-slot:append>
+                      <template #append>
                         {{ new Date(product.createdAt).toLocaleDateString() }}
                       </template>
                     </v-list-item>
@@ -176,12 +185,12 @@
       timeout="3000"
     >
       {{ snackbar.text }}
-      <template v-slot:actions>
+      <template #actions>
         <v-btn
           variant="text"
           icon="mdi-close"
           @click="snackbar.show = false"
-        ></v-btn>
+        />
       </template>
     </v-snackbar>
   </div>
@@ -217,9 +226,7 @@ const fetchProduct = async () => {
   loading.value = true;
   try {
     const response = await productsApi.getProduct(route.params.id);
-    console.log(response.data.data);
     product.value = response.data.data;
-    console.log(product.value);
   } catch (error) {
     console.error('獲取產品詳情失敗:', error);
     toast.error('獲取產品詳情失敗');
@@ -237,7 +244,7 @@ const addToCart = () => {
   addingToCart.value = false;
 };
 
-const getProductImageUrl = (product) => {
+const getProductImageUrl = product => {
   return product && product._id ? `/api/products/${product._id}/image` : '/images/no-image.jpg';
 };
 

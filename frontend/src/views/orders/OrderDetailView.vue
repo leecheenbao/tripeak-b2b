@@ -1,8 +1,14 @@
+<!-- eslint-disable max-len -->
+<!-- eslint-disable max-len -->
 <template>
   <v-container>
     <v-card class="pa-6">
-      <h1 class="text-h4 font-weight-bold mb-6">訂單資訊</h1>
-      <div v-if="loading">載入中...</div>
+      <h1 class="text-h4 font-weight-bold mb-6">
+        訂單資訊
+      </h1>
+      <div v-if="loading">
+        載入中...
+      </div>
       <div v-else-if="order">
         <v-row class="mb-4">
           <v-col cols="12" md="12">
@@ -74,8 +80,8 @@
           class="mt-4"
           color="primary"
           :disabled="order.status !== 'pending'"
-          @click="confirmPayment"
           block
+          @click="confirmPayment"
         >
           確認訂單
         </v-btn>
@@ -83,8 +89,8 @@
           v-if="isAdmin && order.status === 'paid'"
           class="mt-2"
           color="info"
-          @click="markAsShipped"
           block
+          @click="markAsShipped"
         >
           標記為已出貨
         </v-btn>
@@ -92,8 +98,8 @@
           v-if="isAdmin && order.status === 'shipped'"
           class="mt-2"
           color="info"
-          @click="markAsCompleted"
           block
+          @click="markAsCompleted"
         >
           標記為完成訂單
         </v-btn>
@@ -101,23 +107,30 @@
           v-if="isOwner && order.status === 'pending'"
           class="mt-4"
           color="error"
-          @click="showCancelDialog = true"
           block
+          @click="showCancelDialog = true"
         >
           取消訂單
         </v-btn>
         <v-dialog v-model="showCancelDialog" max-width="400">
           <v-card>
-            <v-card-title class="text-h6">確認取消訂單</v-card-title>
+            <v-card-title class="text-h6">
+              確認取消訂單
+            </v-card-title>
             <v-card-text>您確定要取消這筆訂單嗎？此操作無法復原。</v-card-text>
             <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn variant="text" @click="showCancelDialog = false">關閉</v-btn>
-              <v-btn color="error"
+              <v-spacer />
+              <v-btn variant="text" @click="showCancelDialog = false">
+                關閉
+              </v-btn>
+              <v-btn
+                color="error"
                 variant="text"
-                @click="cancelOrder"
                 :loading="cancelling"
-              >確認取消</v-btn>
+                @click="cancelOrder"
+              >
+                確認取消
+              </v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -149,15 +162,14 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
 import { ordersApi } from '@/api';
 import { format } from 'date-fns';
-import { id, zhTW } from 'date-fns/locale';
+import { zhTW } from 'date-fns/locale';
 import { useToast } from 'vue-toastification';
 import { useAuthStore } from '@/stores/auth';
 
 const route = useRoute();
-const router = useRouter();
 const order = ref(null);
 const loading = ref(true);
 const showCancelDialog = ref(false);
@@ -167,7 +179,8 @@ const authStore = useAuthStore();
 const user = computed(() => authStore.user?.data || authStore.user);
 
 const isAdmin = computed(() => user.value && user.value.role === 'admin');
-const isOwner = computed(() => user.value && order.value && order.value.dealer && user.value._id === order.value.dealer._id);
+const isOwner = computed(() => user.value && order.value && order.value.dealer 
+                                  && user.value._id === order.value.dealer._id);
 
 const getStatusColor = status => {
   const statusMap = {
@@ -191,7 +204,7 @@ const getStatusText = status => {
   return statusMap[status] || '未知';
 };
 
-const formatDate = (dateStr) => {
+const formatDate = dateStr => {
   return format(new Date(dateStr), 'yyyy/MM/dd', { locale: zhTW });
 };
 

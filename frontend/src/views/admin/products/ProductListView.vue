@@ -2,7 +2,9 @@
   <div class="product-management">
     <v-container>
       <div class="d-flex align-center justify-space-between mb-6">
-        <h1 class="text-h4 font-weight-bold">產品管理</h1>
+        <h1 class="text-h4 font-weight-bold">
+          產品管理
+        </h1>
         <v-btn
           color="primary"
           prepend-icon="mdi-plus"
@@ -25,7 +27,7 @@
                 density="comfortable"
                 hide-details
                 @update:model-value="handleSearch"
-              ></v-text-field>
+              />
             </v-col>
             <v-col cols="12" sm="3">
               <v-select
@@ -38,7 +40,7 @@
                 density="comfortable"
                 hide-details
                 @update:model-value="handleFilter"
-              ></v-select>
+              />
             </v-col>
             <v-col cols="12" sm="3">
               <v-select
@@ -49,14 +51,14 @@
                 density="comfortable"
                 hide-details
                 @update:model-value="handleFilter"
-              ></v-select>
+              />
             </v-col>
             <v-col cols="12" sm="2" class="d-flex align-center">
               <v-btn
                 color="primary"
                 variant="text"
-                @click="resetFilters"
                 class="ml-auto"
+                @click="resetFilters"
               >
                 重置
               </v-btn>
@@ -78,36 +80,40 @@
           @update:options="handleTableUpdate"
         >
           <!-- 產品圖片 -->
-          <template v-slot:item.image="{ item }">
+          <template #item.image="{ item }">
             <v-avatar size="40" rounded>
               <v-img
                 :src="getProductImageUrl(item)"
                 cover
                 @error="event => event.target.src = '/images/no-image.jpg'"
-              ></v-img>
+              />
             </v-avatar>
           </template>
 
           <!-- 產品名稱 -->
-          <template v-slot:item.name="{ item }">
+          <template #item.name="{ item }">
             <div>
-              <div class="font-weight-medium">{{ item.name }}</div>
-              <div class="text-caption text-grey">{{ item.sku }}</div>
+              <div class="font-weight-medium">
+                {{ item.name }}
+              </div>
+              <div class="text-caption text-grey">
+                {{ item.sku }}
+              </div>
             </div>
           </template>
 
           <!-- 分類 -->
-          <template v-slot:item.category="{ item }">
+          <template #item.category="{ item }">
             {{ item.category?.name }}
           </template>
 
           <!-- 價格 -->
-          <template v-slot:item.price="{ item }">
+          <template #item.price="{ item }">
             NT$ {{ item.price.toLocaleString() }}
           </template>
 
           <!-- 庫存 -->
-          <template v-slot:item.stockQuantity="{ item }">
+          <template #item.stockQuantity="{ item }">
             <v-text-field
               v-model="item.stockQuantity"
               type="number"
@@ -116,22 +122,22 @@
               class="mt-0"
               style="width: 80px"
               @change="updateStock(item)"
-            ></v-text-field>
+            />
           </template>
 
           <!-- 狀態 -->
-          <template v-slot:item.isActive="{ item }">
+          <template #item.isActive="{ item }">
             <v-switch
               v-model="item.isActive"
               color="success"
               hide-details
               density="compact"
               @change="toggleProductStatus(item)"
-            ></v-switch>
+            />
           </template>
 
           <!-- 操作 -->
-          <template v-slot:item.actions="{ item }">
+          <template #item.actions="{ item }">
             <v-btn
               icon
               size="small"
@@ -174,7 +180,7 @@
                   :rules="[rules.required]"
                   variant="outlined"
                   required
-                ></v-text-field>
+                />
               </v-col>
               <v-col cols="12" md="6">
                 <v-text-field
@@ -183,7 +189,7 @@
                   :rules="[rules.required]"
                   variant="outlined"
                   required
-                ></v-text-field>
+                />
               </v-col>
               <v-col cols="12" md="6">
                 <v-select
@@ -195,7 +201,7 @@
                   :rules="[rules.required]"
                   variant="outlined"
                   required
-                ></v-select>
+                />
               </v-col>
               <v-col cols="12" md="6">
                 <v-text-field
@@ -205,7 +211,7 @@
                   :rules="[rules.required, rules.min]"
                   variant="outlined"
                   required
-                ></v-text-field>
+                />
               </v-col>
               <v-col cols="12" md="6">
                 <v-text-field
@@ -215,14 +221,14 @@
                   :rules="[rules.required, rules.min]"
                   variant="outlined"
                   required
-                ></v-text-field>
+                />
               </v-col>
               <v-col cols="12" md="6">
                 <v-text-field
                   v-model="editedItem.unit"
                   label="單位"
                   variant="outlined"
-                ></v-text-field>
+                />
               </v-col>
               <v-col cols="12">
                 <v-textarea
@@ -230,7 +236,7 @@
                   label="產品描述"
                   variant="outlined"
                   rows="3"
-                ></v-textarea>
+                />
               </v-col>
               <v-col cols="12">
                 <v-file-input
@@ -240,7 +246,16 @@
                   variant="outlined"
                   prepend-icon="mdi-camera"
                   @change="handleImageChange"
-                ></v-file-input>
+                />
+              </v-col>
+              <v-col cols="12">
+                <v-img
+                  v-if="imagePreviewUrl"
+                  :src="imagePreviewUrl"
+                  max-width="200"
+                  class="my-2"
+                  cover
+                ></v-img>
               </v-col>
               <v-col cols="12">
                 <v-switch
@@ -248,13 +263,13 @@
                   label="啟用產品"
                   color="success"
                   hide-details
-                ></v-switch>
+                />
               </v-col>
             </v-row>
           </v-form>
         </v-card-text>
         <v-card-actions>
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
             color="grey-darken-1"
             variant="text"
@@ -265,8 +280,8 @@
           <v-btn
             color="primary"
             variant="text"
-            @click="saveProduct"
             :loading="saving"
+            @click="saveProduct"
           >
             保存
           </v-btn>
@@ -280,12 +295,14 @@
       max-width="400px"
     >
       <v-card>
-        <v-card-title class="text-h5">確認刪除</v-card-title>
+        <v-card-title class="text-h5">
+          確認刪除
+        </v-card-title>
         <v-card-text>
           您確定要刪除產品 <strong>{{ productToDelete?.name }}</strong> 嗎？此操作無法撤銷。
         </v-card-text>
         <v-card-actions>
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
             color="grey-darken-1"
             variant="text"
@@ -296,8 +313,8 @@
           <v-btn
             color="error"
             variant="text"
-            @click="deleteProduct"
             :loading="deleting"
+            @click="deleteProduct"
           >
             刪除
           </v-btn>
@@ -344,6 +361,7 @@ const totalProducts = ref(0);
 const productToDelete = ref(null);
 const imageFile = ref(null);
 const page = ref(1);
+const imagePreviewUrl = ref(null);
 
 // 編輯項目
 const defaultItem = {
@@ -386,10 +404,8 @@ const fetchProducts = async (options = {}) => {
       sort: options.sortBy ? `${options.sortBy.key}:${options.sortBy.order === 'desc' ? 'desc' : 'asc'}` : undefined
     };
 
-    console.log(options.sortBy);
     // 調用 API
-    const response = await productsApi.getProducts(params);
-    
+    const response = await productsApi.getAdminProducts(params);
     // 更新數據
     products.value = response.data.data;
     totalProducts.value = response.data.pagination.total;
@@ -412,7 +428,7 @@ const fetchCategories = async () => {
   }
 };
 
-const handleTableUpdate = (options) => {
+const handleTableUpdate = options => {
   const { page: newPage, itemsPerPage: newItemsPerPage, sortBy, sortDesc } = options;
   
   // 更新分頁設置
@@ -452,7 +468,7 @@ const openCreateDialog = () => {
   dialog.value = true;
 };
 
-const editProduct = (item) => {
+const editProduct = item => {
   isEdit.value = true;
   editedItem.value = { ...item };
   imageFile.value = null;
@@ -462,12 +478,18 @@ const editProduct = (item) => {
 const closeDialog = () => {
   dialog.value = false;
   form.value?.reset();
+  imagePreviewUrl.value = null;
 };
 
-const handleImageChange = (file) => {
+const handleImageChange = file => {
   if (file) {
-    // 可以在這裡添加圖片預覽功能
-    console.log('選擇了新圖片:', file);
+    const reader = new FileReader();
+    reader.onload = e => {
+      imagePreviewUrl.value = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  } else {
+    imagePreviewUrl.value = null;
   }
 };
 
@@ -525,6 +547,7 @@ const saveProduct = async () => {
     
     closeDialog();
     fetchProducts();
+    console.log('刷新頁面');
   } catch (error) {
     console.error('保存產品失敗:', error);
     toast.error(error.response?.data?.error || '保存產品失敗');
@@ -533,7 +556,7 @@ const saveProduct = async () => {
   }
 };
 
-const confirmDelete = (item) => {
+const confirmDelete = item => {
   productToDelete.value = item;
   deleteDialog.value = true;
 };
@@ -558,7 +581,7 @@ const deleteProduct = async () => {
   }
 };
 
-const toggleProductStatus = async (item) => {
+const toggleProductStatus = async item => {
   try {
     await productsApi.updateProduct(item._id, {
       isActive: item.isActive
@@ -573,7 +596,7 @@ const toggleProductStatus = async (item) => {
   }
 };
 
-const updateStock = async (item) => {
+const updateStock = async item => {
   try {
     await productsApi.updateProduct(item._id, {
       stockQuantity: item.stockQuantity
@@ -588,7 +611,7 @@ const updateStock = async (item) => {
   }
 };
 
-const getProductImageUrl = (item) => `/api/products/${item._id}/image`;
+const getProductImageUrl = item => `/api/products/${item._id}/image`;
 
 // 生命週期鉤子
 onMounted(() => {

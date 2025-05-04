@@ -344,14 +344,10 @@ const fetchDashboardData = async () => {
   try {
     // 獲取當前用戶資料
     await authStore.fetchCurrentUser();
-    console.log(user.value.data.companyName);
-
     
     setTimeout(() => {
-      // 統計數據
-      fetchOrders();
-      
       // 最近訂單
+      fetchOrders();
 
       loading.value = false;
     }, 1000);
