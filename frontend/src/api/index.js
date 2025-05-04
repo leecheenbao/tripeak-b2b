@@ -253,7 +253,17 @@ export const ordersApi = {
   createOrder(data) {
     return apiClient.post('/orders', data);
   },
-  
+
+  // 取消訂單
+  cancelOrder(id) {
+    return apiClient.put(`/orders/${id}/status`, { status: 'cancelled' });
+  },
+
+  // 確認收款
+  confirmPayment(id) {
+    return apiClient.put(`/orders/${id}/status`, { status: 'paid' });
+  },
+
   // 更新訂單 (管理員)
   updateOrder(id, data) {
     return apiClient.put(`/orders/${id}`, data);

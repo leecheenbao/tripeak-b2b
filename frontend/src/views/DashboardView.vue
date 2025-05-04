@@ -174,55 +174,42 @@
       <!-- 最近訂單 -->
       <h2 class="text-h5 font-weight-bold mt-6 mb-4">最近訂單</h2>
       <v-card>
-        <v-data-table-server
-          :headers="headers"
-          :items="recentOrders"
-          :items-per-page="5"
-          :loading="loading"
-          item-value="id"
-          class="elevation-0"
-        >
-          <template v-slot:item.status="{ item }">
-            <v-chip
-              :color="getStatusColor(item.status)"
-              size="small"
-              class="text-caption"
-            >
-              {{ getStatusText(item.status) }}
-            </v-chip>
-          </template>
-          
-          <template v-slot:item.total="{ item }">
-            NT$ {{ item.total.toLocaleString() }}
-          </template>
-          
-          <template v-slot:item.createdAt="{ item }">
-            {{ formatDate(item.createdAt) }}
-          </template>
-          
-          <template v-slot:item.actions="{ item }">
-            <v-btn
-              icon
-              size="small"
-              variant="text"
-              :to="{ name: 'OrderDetail', params: { id: item.id } }"
-            >
-              <v-icon>mdi-eye</v-icon>
-            </v-btn>
-          </template>
-        </v-data-table-server>
-        
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn
-            variant="text"
-            color="primary"
-            :to="{ name: 'Orders' }"
-          >
-            查看所有訂單
-            <v-icon end>mdi-chevron-right</v-icon>
-          </v-btn>
-        </v-card-actions>
+        <v-table>
+          <thead>
+            <tr>
+              <th>訂單編號</th>
+              <th>狀態</th>
+              <th>總金額</th>
+              <th>建立日期</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-if="recentOrders.length === 0">
+              <td colspan="5" class="text-center text-grey">暫無最近訂單</td>
+            </tr>
+            <tr v-for="item in recentOrders" :key="item._id">
+              <td>{{ item.orderNumber }}</td>
+              <td>
+                <v-chip :color="getStatusColor(item.status)" size="small">
+                  {{ getStatusText(item.status) }}
+                </v-chip>
+              </td>
+              <td>NT$ {{ item.totalAmount?.toLocaleString?.() ?? item.total?.toLocaleString?.() ?? 0 }}</td>
+              <td>{{ formatDate(item.createdAt) }}</td>
+              <td>
+                <v-btn
+                  icon
+                  size="small"
+                  variant="text"
+                  :to="{ name: 'OrderDetail', params: { id: item._id || item.id } }"
+                >
+                  <v-icon>mdi-eye</v-icon>
+                </v-btn>
+              </td>
+            </tr>
+          </tbody>
+        </v-table>
       </v-card>
       
       <!-- 快速訪問 -->
@@ -263,12 +250,17 @@ import { useAuthStore } from '@/stores/auth';
 import { useCartStore } from '@/stores/cart';
 import { format } from 'date-fns';
 import { zhTW } from 'date-fns/locale';
+import { ordersApi } from '@/api';
+import { useToast } from 'vue-toastification';
+
 
 // Store
 const authStore = useAuthStore();
 const cartStore = useCartStore();
 const user = computed(() => authStore.user || {});
 const userDisplayName = computed(() => user.value.data?.contactName || '用戶');
+const toast = useToast();
+const orders = ref([]);
 
 // 格式化當前日期
 const formattedDate = computed(() => {
@@ -286,15 +278,13 @@ const stats = ref({
   totalProducts: 0
 });
 
-// 最近訂單
-const recentOrders = ref([]);
-const headers = [
-  { title: '訂單編號', key: 'orderNumber', sortable: false },
-  { title: '狀態', key: 'status', sortable: false },
-  { title: '總金額', key: 'total', sortable: false },
-  { title: '建立日期', key: 'createdAt', sortable: false },
-  { title: '操作', key: 'actions', sortable: false, align: 'end' }
-];
+// 最近訂單（取前5筆，依建立日期新到舊排序）
+const recentOrders = computed(() => {
+  if (!orders.value || orders.value.length === 0) return [];
+  return [...orders.value]
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    .slice(0, 5);
+});
 
 // 快速訪問項目
 const quickActions = [
@@ -312,6 +302,7 @@ const getStatusColor = (status) => {
     'processing': 'info',
     'shipped': 'success',
     'delivered': 'primary',
+    'completed': 'success',
     'cancelled': 'error'
   };
   return statusMap[status] || 'grey';
@@ -323,6 +314,7 @@ const getStatusText = (status) => {
     'processing': '處理中',
     'shipped': '已出貨',
     'delivered': '已送達',
+    'completed': '已完成',
     'cancelled': '已取消'
   };
   return statusMap[status] || '未知';
@@ -331,6 +323,18 @@ const getStatusText = (status) => {
 // 格式化日期
 const formatDate = (dateStr) => {
   return format(new Date(dateStr), 'yyyy/MM/dd', { locale: zhTW });
+};
+
+const fetchOrders = async () => {
+  loading.value = true;
+  try {
+    const response = await ordersApi.getOrders();
+    orders.value = response.data.data;
+  } catch (error) {
+    toast.error('獲取訂單失敗');
+  } finally {
+    loading.value = false;
+  }
 };
 
 // 初始化页面数据
@@ -343,10 +347,12 @@ const fetchDashboardData = async () => {
     console.log(user.value.data.companyName);
 
     
-    // 模擬 API 調用
     setTimeout(() => {
-      // TODO: 統計數據
-      // TODO: 最近訂單
+      // 統計數據
+      fetchOrders();
+      
+      // 最近訂單
+
       loading.value = false;
     }, 1000);
     

@@ -174,7 +174,7 @@ export const useAuthStore = defineStore('auth', {
             Authorization: `Bearer ${this.token}`
           }
         });
-        this.user = response.data.data;
+        this.user = { data: response.data.data };
         
         const toast = useToast();
         toast.success('個人資料已更新');

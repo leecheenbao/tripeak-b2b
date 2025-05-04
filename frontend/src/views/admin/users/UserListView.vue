@@ -154,7 +154,6 @@
     <v-dialog
       v-model="dialog"
       max-width="600px"
-      persistent
     >
       <v-card>
         <v-card-title class="text-h5">
@@ -361,7 +360,7 @@ const fetchUsers = async (options = {}) => {
     
     // 更新數據
     users.value = response.data.data;
-    totalUsers.value = response.data.total;
+    totalUsers.value = typeof response.data.total === 'number' ? response.data.total : (Array.isArray(response.data.data) ? response.data.data.length : 0);
     
   } catch (error) {
     console.error('獲取用戶列表失敗:', error);

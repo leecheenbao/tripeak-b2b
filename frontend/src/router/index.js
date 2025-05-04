@@ -28,7 +28,7 @@ const AdminUserEdit = () => import('@/views/admin/users/UserEditView.vue');
 const AdminProductList = () => import('@/views/admin/products/ProductListView.vue');
 const AdminProductEdit = () => import('@/views/admin/products/ProductEditView.vue');
 const AdminCategoryList = () => import('@/views/admin/categories/CategoryListView.vue');
-const AdminOrderList = () => import('@/views/admin/orders/OrderListView.vue');
+const AdminOrderList = () => import('@/views/admin/orders/OrderAdminListView.vue');
 const AdminOrderDetail = () => import('@/views/admin/orders/OrderDetailView.vue');
 const AdminReports = () => import('@/views/admin/reports/ReportsView.vue');
 const AdminLineMessages = () => import('@/views/admin/line/LineMessagesView.vue');
@@ -239,7 +239,7 @@ router.beforeEach(async (to, from, next) => {
     }
     
     // 檢查是否需要管理員權限
-    if (to.meta.requiresAdmin && authStore.user?.role !== 'admin') {
+    if (to.meta.requiresAdmin && authStore.user?.data?.role !== 'admin') {
       return next({ name: 'Dashboard' });
     }
   } else if (authStore.isLoggedIn && (to.name === 'Login' || to.name === 'Register' || to.name === 'ForgotPassword')) {

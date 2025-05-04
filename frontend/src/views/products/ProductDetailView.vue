@@ -108,6 +108,18 @@
               </v-btn>
             </div>
 
+            <!-- 前往結帳 -->
+            <v-btn
+              color="blue"
+              size="large"
+              block
+              @click="addToCart"
+              to="/cart"
+            >
+              前往結帳
+            </v-btn>
+
+
             <!-- 產品描述 -->
             <v-expansion-panels class="mt-6">
               <v-expansion-panel>
@@ -178,12 +190,13 @@
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { productsApi } from '@/api';
-import { useUiStore } from '@/stores/ui';
+import { useCartStore } from '@/stores/cart';
 import { useToast } from 'vue-toastification';
+import CartIcon from '@/components/CartIcon.vue';
 
 const route = useRoute();
 const router = useRouter();
-const uiStore = useUiStore();
+const cartStore = useCartStore();
 const toast = useToast();
 
 // 狀態
@@ -216,33 +229,14 @@ const fetchProduct = async () => {
   }
 };
 
-// 加入購物車
-const addToCart = async () => {
-  if (quantity.value <= 0) return;
-  
+const addToCart = () => {
+  if (!product.value) return;
   addingToCart.value = true;
-  try {
-    const cartItem = {
-      ...product.value,
-      quantity: quantity.value
-    };
-    
-    uiStore.addToCart(cartItem);
-    
-    snackbar.value = {
-      show: true,
-      text: `已將 ${product.value.name} 加入購物車`,
-      color: 'success'
-    };
-  } catch (error) {
-    console.error('加入購物車失敗:', error);
-    toast.error('加入購物車失敗');
-  } finally {
-    addingToCart.value = false;
-  }
+  cartStore.addItem(product.value, quantity.value);
+  toast.success(`已將 ${product.value.name} 加入購物車`);
+  addingToCart.value = false;
 };
 
-// 生命週期鉤子
 onMounted(() => {
   fetchProduct();
 });

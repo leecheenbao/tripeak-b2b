@@ -1,5 +1,5 @@
 <template>
-  <v-app :theme="theme">
+  <v-app :theme="themeMode">
     <v-navigation-drawer
       v-model="drawer"
       :rail="miniVariant"
@@ -83,6 +83,8 @@
       
       <v-spacer></v-spacer>
       
+      <CartIcon class="mr-2" />
+      
       <!-- 使用者選單 -->
       <v-menu min-width="200px" rounded>
         <template v-slot:activator="{ props }">
@@ -147,7 +149,6 @@
     <v-overlay 
       :model-value="loading.isLoading" 
       class="align-center justify-center" 
-      persistent
     >
       <v-progress-circular 
         :size="70" 
@@ -167,12 +168,15 @@ import { ref, computed, onMounted, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 import { useUiStore } from '@/stores/ui';
+import { useCartStore } from '@/stores/cart';
 import { useDisplay, useTheme } from 'vuetify';
 import { MERCHANT_NAME } from '@/config';
+import CartIcon from '@/components/CartIcon.vue';
 
 // 存取 Store
 const authStore = useAuthStore();
 const uiStore = useUiStore();
+const cartStore = useCartStore();
 const router = useRouter();
 const route = useRoute();
 const { mobile } = useDisplay();
@@ -215,6 +219,7 @@ const menuItems = computed(() => {
     { title: '儀表板', icon: 'mdi-view-dashboard', to: '/dashboard' },
     { title: '產品目錄', icon: 'mdi-shopping', to: '/products' },
     { title: '我的訂單', icon: 'mdi-clipboard-list', to: '/orders' },
+    { title: '購物車', icon: 'mdi-cart', to: '/cart' },
   ];
   
   // 管理員特有項目
@@ -244,6 +249,7 @@ watch(mobile, (newValue) => {
 
 // 生命週期函數
 onMounted(async () => {
+  cartStore.loadFromLocalStorage();
   // 設定主題
   theme.global.name.value = themeMode.value;
   

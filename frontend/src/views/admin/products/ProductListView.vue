@@ -155,7 +155,6 @@
     <v-dialog
       v-model="dialog"
       max-width="800px"
-      persistent
     >
       <v-card>
         <v-card-title class="text-h5">

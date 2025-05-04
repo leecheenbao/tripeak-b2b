@@ -280,7 +280,6 @@ const isPasswordFormValid = computed(() => {
 const fetchProfile = async () => {
   try {
     const userData = await authApi.getCurrentUser();
-    console.log(userData.data.data);
     profile.value = { ...userData.data.data };
   } catch (error) {
     console.error('獲取個人資料失敗:', error);
@@ -344,6 +343,7 @@ const saveProfile = async () => {
         color: 'success'
       };
     }
+    fetchProfile();
   } catch (error) {
     console.error('更新個人資料失敗:', error);
     toast.error(error.response?.data?.message || '更新個人資料失敗');
