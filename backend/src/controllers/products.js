@@ -10,91 +10,127 @@ const app = express();
 app.use(fileUpload());
 
 /**
- * @desc    獲取所有產品
+ * 處理產品查詢參數與查詢
+ * @param {Object} req - Express request
+ * @param {Boolean} isAdmin - 是否為管理員查詢
+ * @returns {Object} { products, total, page, limit }
+ */
+async function queryProducts(req, isAdmin = false) {
+  const filter = {};
+
+  // 分類篩選
+  if (req.query.category) {
+    filter.category = req.query.category;
+  }
+  if (req.query.category_id) {
+    filter.category = req.query.category_id;
+  }
+
+  // 狀態篩選
+  if (isAdmin) {
+    if (req.query.isActive) {
+      filter.isActive = req.query.isActive === 'true';
+    }
+  } else {
+    filter.isActive = true;
+  }
+
+  // 關鍵字搜尋
+  if (req.query.keyword) {
+    filter.$or = [
+      { name: { $regex: req.query.keyword, $options: 'i' } },
+      { description: { $regex: req.query.keyword, $options: 'i' } },
+      { sku: { $regex: req.query.keyword, $options: 'i' } }
+    ];
+  }
+
+  // 價格範圍
+  if (req.query.min_price && req.query.max_price) {
+    filter.price = { $gte: req.query.min_price, $lte: req.query.max_price };
+  }
+
+  // 分頁
+  const page = parseInt(req.query.page, 10) || 1;
+  const limit = parseInt(req.query.limit, 10) || 20;
+  const skip = (page - 1) * limit;
+
+  // 排序
+  let sort = {};
+  switch (req.query.sort) {
+    case 'newest':
+      sort = { createdAt: -1 };
+      break;
+    case 'price:desc':
+      sort = { price: -1 };
+      break;
+    case 'price:asc':
+      sort = { price: 1 };
+      break;
+    case 'name:asc':
+      sort = { name: 1 };
+      break;
+    case 'name:desc':
+      sort = { name: -1 };
+      break;
+    case 'stockQuantity:asc':
+      sort = { stockQuantity: 1 };
+      break;
+    case 'stockQuantity:desc':
+      sort = { stockQuantity: -1 };
+      break;
+    default:
+      sort = { displayOrder: 1, name: 1 };
+  }
+
+  // 查詢
+  const products = await Product.find(filter)
+    .select('-image')
+    .populate('category', 'name')
+    .sort(sort)
+    .skip(skip)
+    .limit(limit);
+
+  const total = await Product.countDocuments(filter);
+
+  return { products, total, page, limit };
+}
+
+/**
+ * @desc    獲取所有產品（前台/一般用戶）
  * @route   GET /api/products
  * @access  Public
  */
 exports.getProducts = async (req, res) => {
   try {
-    const filter = {};
-    
-    // 分類篩選
-    if (req.query.category) {
-      filter.category = req.query.category;
-    }
+    const { products, total, page, limit } = await queryProducts(req, false);
+    res.status(200).json({
+      success: true,
+      count: products.length,
+      pagination: {
+        total,
+        page,
+        limit,
+        pages: Math.ceil(total / limit)
+      },
+      data: products
+    });
+  } catch (err) {
+    logger.error(`獲取產品列表失敗: ${err.message}`);
+    res.status(500).json({
+      success: false,
+      error: '獲取產品列表失敗'
+    });
+  }
+};
 
-    // 活躍狀態篩選（管理員可以查看所有產品，經銷商只能查看活躍產品）
-    if (req.user && req.user.role === 'admin') {
-      if (req.query.isActive) {
-        filter.isActive = req.query.isActive === 'true';
-      }
-    } else {
-      filter.isActive = true;
-    }
-
-    // 搜尋關鍵字
-    if (req.query.keyword) {
-      filter.$or = [
-        { name: { $regex: req.query.keyword, $options: 'i' } },
-        { description: { $regex: req.query.keyword, $options: 'i' } },
-        { sku: { $regex: req.query.keyword, $options: 'i' } }
-      ];
-    }
-
-    // 分類
-    if (req.query.category_id) {
-      filter.category = req.query.category_id;
-    }
-
-    // 價格範圍
-    if (req.query.min_price && req.query.max_price) {
-      filter.price = { $gte: req.query.min_price, $lte: req.query.max_price };
-    }
-    
-    // 分頁設置
-    const page = parseInt(req.query.page, 10) || 1;
-    const limit = parseInt(req.query.limit, 10) || 20;
-    const skip = (page - 1) * limit;
-
-    // 排序設置
-    let sort = {};
-    switch (req.query.sort) {
-      case 'newest':
-        sort = { createdAt: -1 };
-        break;
-      case 'price:desc':
-        sort = { price: -1 };
-        break;
-      case 'price:asc':
-        sort = { price: -1 };
-        break;
-      case 'name:asc':
-        sort = { name: 1 };
-        break;
-      case 'name:desc':
-        sort = { name: -1 };
-        break;
-      case 'stockQuantity:asc':
-        sort = { stockQuantity: 1 };
-        break;
-      case 'stockQuantity:desc':
-        sort = { stockQuantity: -1 };
-        break;
-      default:
-        sort = { displayOrder: 1, name: 1 };
-    }
-
-    // 執行查詢 - 忽略 image 欄位
-    const products = await Product.find(filter)
-      .select('-image') // 忽略 image 欄位
-      .populate('category', 'name')
-      .sort(sort)
-      .skip(skip)
-      .limit(limit);
-
-    // 獲取總數
-    const total = await Product.countDocuments(filter);
-
+/**
+ * @desc    獲取所有產品（後台/管理員）
+ * @route   GET /api/admin/products
+ * @access  Private/Admin
+ */
+exports.getAdminProducts = async (req, res) => {
+  try {
+    const { products, total, page, limit } = await queryProducts(req, true);
     res.status(200).json({
       success: true,
       count: products.length,
