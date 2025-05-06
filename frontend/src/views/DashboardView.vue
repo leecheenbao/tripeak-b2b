@@ -134,7 +134,11 @@
                     rounded
                     class="me-3"
                   >
-                    <v-img :src="item.imageUrl" cover></v-img>
+                    <v-img
+                      :src="getProductImageUrl(item)"
+                      cover
+                      @error="event => event.target.src = '/images/no-image.jpg'"
+                    ></v-img>
                   </v-avatar>
                 </template>
                 <v-list-item-title class="text-subtitle-2">
@@ -362,6 +366,11 @@ const fetchDashboardData = async () => {
 onMounted(() => {
   fetchDashboardData();
 });
+
+// 取得商品圖片 API 路徑
+const getProductImageUrl = (item) => {
+  return item && item._id ? `/api/products/${item._id}/image` : '/images/no-image.jpg';
+};
 </script>
 
 <style lang="scss" scoped>
