@@ -6,7 +6,8 @@ const {
   updateOrderStatus,
   updateOrder,
   deleteOrder,
-  exportOrders
+  exportOrders,
+  getDashboardSummary
 } = require('../controllers/orders');
 const { protect, authorize } = require('../middleware/auth');
 
@@ -19,6 +20,7 @@ router.use(protect);
 router.get('/', getOrders);
 router.get('/:id', getOrder);
 router.post('/', createOrder);
+router.get('/dashboard/summary', getDashboardSummary);
 
 // 僅管理員可以訪問的路由
 router.get('/export', authorize('admin'), exportOrders);

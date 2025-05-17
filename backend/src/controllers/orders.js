@@ -509,4 +509,42 @@ exports.exportOrders = async (req, res) => {
       error: '導出訂單報表失敗'
     });
   }
+};
+
+/**
+ * @desc    儀表板統計資訊
+ * @route   GET /api/dashboard/summary
+ * @access  Private/Admin
+ */
+exports.getDashboardSummary = async (req, res) => {
+  try {
+    // 訂單統計
+    const [
+      totalOrders,
+      pendingOrders,
+      shippedOrders,
+      availableProducts
+    ] = await Promise.all([
+      Order.countDocuments({}),
+      Order.countDocuments({ status: 'pending' }),
+      Order.countDocuments({ status: 'shipped' }),
+      Product.countDocuments({ isActive: true })
+    ]);
+
+    res.status(200).json({
+      success: true,
+      data: {
+        totalOrders,
+        pendingOrders,
+        shippedOrders,
+        availableProducts
+      }
+    });
+  } catch (err) {
+    logger.error(`獲取儀表板統計失敗: ${err.message}`);
+    res.status(500).json({
+      success: false,
+      error: '獲取儀表板統計失敗'
+    });
+  }
 }; 
