@@ -61,7 +61,7 @@ npm run serve
 yarn serve
 ```
 
-應用將運行在 http://localhost:8080 (默認端口)
+應用將運行在 http://localhost:8888 (默認端口)
 
 ## 構建生產版本
 

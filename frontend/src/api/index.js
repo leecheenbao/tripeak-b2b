@@ -4,7 +4,7 @@ import { useAuthStore } from '@/stores/auth';
 
 // API 服務實例
 export const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8080/api',
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8888/api',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -18,24 +18,24 @@ export function setupApi() {
   
   // 請求攔截器 - 添加認證令牌等
   apiClient.interceptors.request.use(
-    (config) => {
+    config => {
       const authStore = useAuthStore();
       if (authStore.token) {
         config.headers.Authorization = `Bearer ${authStore.token}`;
       }
       return config;
     },
-    (error) => {
+    error => {
       return Promise.reject(error);
     }
   );
   
   // 響應攔截器 - 處理錯誤等
   apiClient.interceptors.response.use(
-    (response) => {
+    response => {
       return response;
     },
-    async (error) => {
+    async error => {
       const authStore = useAuthStore();
       
       // 獲取原始請求配置

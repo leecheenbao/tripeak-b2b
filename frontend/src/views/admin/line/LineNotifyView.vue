@@ -63,7 +63,7 @@ const fetchStatus = async () => {
 const goToLineLogin = () => {
   // 請將 YOUR_CLIENT_ID, YOUR_REDIRECT_URI 換成實際值
   const clientId = '2004244055';
-  const redirectUri = encodeURIComponent('https://localhost:8080/admin/line-notify');
+  const redirectUri = encodeURIComponent('https://localhost:8888/admin/line-notify');
   const state = Math.random().toString(36).substring(2, 15);
   const scope = 'profile openid';
   const url = `https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&state=${state}&scope=${scope}`;
