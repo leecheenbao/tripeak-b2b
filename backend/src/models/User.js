@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 
 const UserSchema = new mongoose.Schema(
   {
@@ -83,6 +84,17 @@ UserSchema.methods.getSignedJwtToken = function() {
 // 比對密碼
 UserSchema.methods.matchPassword = async function(enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
+};
+
+// 產生重設密碼 token
+UserSchema.methods.getResetPasswordToken = function() {
+  // 產生隨機 token
+  const resetToken = crypto.randomBytes(32).toString('hex');
+  // hash 後存入 DB
+  this.resetPasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+  // 設定過期時間
+  this.resetPasswordExpire = Date.now() + 60 * 60 * 1000; // 1小時
+  return resetToken; // 回傳原始 token（用於 email 連結）
 };
 
 module.exports = mongoose.model('User', UserSchema); 

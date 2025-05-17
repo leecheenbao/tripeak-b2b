@@ -20,15 +20,25 @@ exports.getCategories = async (req, res) => {
       filter.isActive = true;
     }
 
-    const categories = await Category.find(filter).sort({ displayOrder: 1, name: 1 });
+    // 先查詢所有分類
+    const categories = await Category.find(filter);
+
+    // 顯示個別分類的產品數量
+    const categoriesWithCount = await Promise.all(
+      categories.map(async (category) => {
+        const productCount = await Product.countDocuments({ category: category._id });
+        return { ...category._doc, productCount };
+      })
+    );
 
     res.status(200).json({
       success: true,
-      count: categories.length,
-      data: categories
+      count: categoriesWithCount.length,
+      data: categoriesWithCount
     });
   } catch (err) {
     logger.error(`獲取分類失敗: ${err.message}`);
+    console.log(err);
     res.status(500).json({
       success: false,
       error: '獲取分類失敗'

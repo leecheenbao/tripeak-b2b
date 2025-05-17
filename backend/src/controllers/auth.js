@@ -1,6 +1,12 @@
 const User = require('../models/User');
 const logger = require('../utils/logger');
 const jwt = require('jsonwebtoken');
+const express = require('express');
+const router = express.Router();
+const crypto = require('crypto');
+const nodemailer = require('nodemailer');
+const FRONTEND_URL = process.env.FRONTEND_URL;
+require('dotenv').config();
 
 /**
  * @desc    註冊用戶
@@ -242,6 +248,74 @@ exports.updateProfile = async (req, res) => {
 };
 
 /**
+ * @desc 忘記密碼 - 發送重設密碼連結
+ * @route POST /api/auth/forgot-password
+ * @access Public
+ */
+exports.forgotPassword = async (req, res) => {
+  const user = await User.findOne({ email: req.body.email });
+  if (!user) {
+    return res.status(400).json({ success: false, error: '此郵箱不存在' });
+  }
+
+  // 產生 token 並存入 DB
+  const resetToken = user.getResetPasswordToken();
+  await user.save();
+
+  // 前端重設密碼頁連結
+  const resetUrl = `${FRONTEND_URL}/reset-password?token=${resetToken}`;
+
+  // email 內容
+  const message = `
+    <p>請點擊下方連結重設您的密碼：</p>
+    <a href="${resetUrl}">請點選我重設密碼</a>
+    <p>此連結一小時內有效。</p>
+  `;
+
+  try {
+    await transporter.sendMail({
+      to: user.email,
+      from: process.env.EMAIL_USER,
+      subject: '重設密碼連結',
+      html: message,
+    });
+
+    res.status(200).json({ success: true, message: '重設密碼連結已寄出，請檢查您的信箱' });
+  } catch (err) {
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+    logger.error(`重設密碼連結發送失敗: ${err.message}`);
+    await user.save();
+    res.status(500).json({ success: false, error: 'Email 發送失敗，請稍後再試' });
+  }
+};
+
+/**
+ * @desc 重設密碼
+ * @route POST /api/auth/reset-password
+ * @access Public
+ */
+exports.resetPassword = async (req, res) => {
+  const { token, newPassword } = req.body;
+  // hash token 以比對 DB
+  const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+  const user = await User.findOne({
+    resetPasswordToken: hashedToken,
+    resetPasswordExpire: { $gt: Date.now() }
+  });
+  if (!user) {
+    return res.status(400).json({ success: false, error: '連結無效或已過期' });
+  }
+
+  user.password = newPassword;
+  user.resetPasswordToken = undefined;
+  user.resetPasswordExpire = undefined;
+  await user.save();
+
+  res.status(200).json({ success: true, message: '密碼重設成功，請重新登入' });
+};
+
+/**
  * 獲取 token，創建 cookie 並發送響應
  */
 const sendTokenResponse = (user, statusCode, res) => {
@@ -299,4 +373,13 @@ exports.protect = async (req, res, next) => {
       error: '未授權訪問'
     });
   }
-}; 
+};
+
+// 建立 nodemailer transporter
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+}); 
