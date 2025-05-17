@@ -10,7 +10,6 @@ const NotFound = () => import('@/views/NotFoundView.vue');
 // 路由組件 - 需要認證的頁面
 const Dashboard = () => import('@/views/DashboardView.vue');
 const Profile = () => import('@/views/ProfileView.vue');
-const Settings = () => import('@/views/SettingsView.vue');
 
 // 產品相關
 const ProductList = () => import('@/views/products/ProductListView.vue');
@@ -22,14 +21,10 @@ const OrderDetail = () => import('@/views/orders/OrderDetailView.vue');
 const OrderCheckout = () => import('@/views/orders/OrderCheckoutView.vue');
 
 // 管理員頁面
-const AdminDashboard = () => import('@/views/admin/DashboardView.vue');
 const AdminUserList = () => import('@/views/admin/users/UserListView.vue');
-const AdminUserEdit = () => import('@/views/admin/users/UserEditView.vue');
 const AdminProductList = () => import('@/views/admin/products/ProductListView.vue');
-const AdminProductEdit = () => import('@/views/admin/products/ProductEditView.vue');
 const AdminCategoryList = () => import('@/views/admin/categories/CategoryListView.vue');
 const AdminOrderList = () => import('@/views/admin/orders/OrderAdminListView.vue');
-const AdminOrderDetail = () => import('@/views/admin/orders/OrderDetailView.vue');
 const AdminReports = () => import('@/views/admin/reports/ReportsView.vue');
 const AdminLineNotify = () => import('@/views/admin/line/LineNotifyView.vue');
 
@@ -72,13 +67,6 @@ const routes = [
     component: Profile,
     meta: { requiresAuth: true, title: '個人資料' }
   },
-  {
-    path: '/settings',
-    name: 'Settings',
-    component: Settings,
-    meta: { requiresAuth: true, title: '設定' }
-  },
-
   // 產品相關路由
   {
     path: '/products',
@@ -112,14 +100,6 @@ const routes = [
     component: OrderCheckout,
     meta: { requiresAuth: true, title: '結帳' }
   },
-
-  // 管理員路由
-  {
-    path: '/admin',
-    name: 'Admin',
-    component: AdminDashboard,
-    meta: { requiresAuth: true, requiresAdmin: true, title: '管理後臺' },
-  },
   // 用戶管理
   {
     path: '/admin/users',
@@ -127,24 +107,12 @@ const routes = [
     component: AdminUserList,
     meta: { requiresAuth: true, requiresAdmin: true, title: '用戶管理' }
   },
-  {
-    path: '/admin/users/:id',
-    name: 'AdminUserEdit',
-    component: AdminUserEdit,
-    meta: { requiresAuth: true, requiresAdmin: true, title: '編輯用戶' }
-  },
   // 產品管理
   {
     path: '/admin/products',
     name: 'AdminProducts',
     component: AdminProductList,
     meta: { requiresAuth: true, requiresAdmin: true, title: '產品管理' }
-  },
-  {
-    path: '/admin/products/:id',
-    name: 'AdminProductEdit',
-    component: AdminProductEdit,
-    meta: { requiresAuth: true, requiresAdmin: true, title: '編輯產品' }
   },
   // 分類管理
   {
@@ -159,12 +127,6 @@ const routes = [
     name: 'AdminOrders',
     component: AdminOrderList,
     meta: { requiresAuth: true, requiresAdmin: true, title: '訂單管理' }
-  },
-  {
-    path: '/admin/orders/:id',
-    name: 'AdminOrderDetail',
-    component: AdminOrderDetail,
-    meta: { requiresAuth: true, requiresAdmin: true, title: '訂單詳情' }
   },
   // 報表分析
   {

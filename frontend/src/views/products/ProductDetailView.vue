@@ -43,7 +43,7 @@
               height="400"
               cover
               class="align-end"
-              @error="event => event.target.src = '/images/no-image.jpg'"
+              @error="onImgError"
             />
           </v-card>
         </v-col>
@@ -246,6 +246,13 @@ const addToCart = () => {
 
 const getProductImageUrl = product => {
   return product && product._id ? `/api/products/${product._id}/image` : '/images/no-image.jpg';
+};
+
+const onImgError = event => {
+  // 確保 event 與 event.target 存在
+  if (event && event.target) {
+    event.target.src = '/images/no-image.jpg';
+  }
 };
 
 onMounted(() => {

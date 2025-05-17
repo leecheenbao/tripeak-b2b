@@ -1,0 +1,68 @@
+version: "3.9"
+
+services:
+  # 前端服務
+  frontend:
+    build: ./frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - tripeak-network
+
+  # 後端服務
+  backend:
+    build: ./backend
+    ports:
+      - "8080:8080"
+    environment:
+      - NODE_ENV=production
+      - MONGO_URI=mongodb://mongodb:27017/tripeak-b2b
+      # 其他後端環境變數可加在這裡
+    depends_on:
+      - mongodb
+    networks:
+      - tripeak-network
+
+  # MongoDB 服務
+  mongodb:
+    image: mongo:6.0
+    container_name: tripeak-mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: tripeak-b2b
+    volumes:
+      - mongodb_data:/data/db
+      # 如有初始化腳本可加上
+      # - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    networks:
+      - tripeak-network
+
+  # MongoDB 管理界面
+  mongo-express:
+    image: mongo-express:latest
+    container_name: tripeak-mongo-express
+    restart: always
+    depends_on:
+      - mongodb
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongodb
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: admin
+    volumes:
+      - ./backend/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    networks:
+      - tripeak-network
+
+volumes:
+  mongodb_data:
+    name: tripeak-mongodb-data
+
+networks:
+  tripeak-network:
+    name: tripeak-network

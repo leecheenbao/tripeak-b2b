@@ -137,7 +137,7 @@
                     <v-img
                       :src="getProductImageUrl(item)"
                       cover
-                      @error="event => event.target.src = '/images/no-image.jpg'"
+                      @error="onImgError"
                     ></v-img>
                   </v-avatar>
                 </template>
@@ -370,6 +370,13 @@ onMounted(() => {
 // 取得商品圖片 API 路徑
 const getProductImageUrl = (item) => {
   return item && item._id ? `/api/products/${item._id}/image` : '/images/no-image.jpg';
+};
+
+const onImgError = event => {
+  // 確保 event 與 event.target 存在
+  if (event && event.target) {
+    event.target.src = '/images/no-image.jpg';
+  }
 };
 </script>
 
