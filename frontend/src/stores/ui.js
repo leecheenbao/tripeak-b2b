@@ -35,9 +35,9 @@ export const useUiStore = defineStore('ui', {
   }),
   
   getters: {
-    isDarkMode: (state) => state.theme.mode === 'dark',
-    cartItemCount: (state) => state.cart.items.length,
-    cartTotalAmount: (state) => {
+    isDarkMode: state => state.theme.mode === 'dark',
+    cartItemCount: state => state.cart.items.length,
+    cartTotalAmount: state => {
       return state.cart.items.reduce((total, item) => {
         return total + (item.price * item.quantity);
       }, 0);

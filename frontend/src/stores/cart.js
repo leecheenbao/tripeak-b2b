@@ -7,13 +7,13 @@ export const useCartStore = defineStore('cart', {
   }),
 
   getters: {
-    totalItems: (state) => state.items.reduce((total, item) => total + item.quantity, 0),
+    totalItems: state => state.items.reduce((total, item) => total + item.quantity, 0),
     
-    totalAmount: (state) => state.items.reduce((total, item) => {
+    totalAmount: state => state.items.reduce((total, item) => {
       return total + (item.price * item.quantity);
     }, 0),
 
-    formattedTotalAmount: (state) => {
+    formattedTotalAmount: state => {
       return state.items.reduce((total, item) => {
         return total + (item.price * item.quantity);
       }, 0).toLocaleString();
@@ -35,7 +35,7 @@ export const useCartStore = defineStore('cart', {
           name: product.name,
           price: product.price,
           imageUrl: product.imageUrl,
-          quantity: quantity,
+          quantity,
           sku: product.sku,
           category: product.category,
           unit: product.unit

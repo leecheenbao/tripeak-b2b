@@ -75,14 +75,15 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useCartStore } from '@/stores/cart';
+import { useUserStore } from '@/stores/user';
 import { useRouter } from 'vue-router';
 import { useToast } from 'vue-toastification';
-// 假設有 ordersApi.createOrder 方法
 import { ordersApi } from '@/api';
 
 const cartStore = useCartStore();
+const userStore = useUserStore();
 const router = useRouter();
 const toast = useToast();
 
@@ -97,6 +98,18 @@ const orderCreated = ref(false);
 const orderAmount = computed(() => cartStore.totalAmount);
 const form = ref(null);
 
+onMounted(async () => {
+  if (!userStore.user) {
+    await userStore.fetchMe();
+  }
+  if (userStore.user) {
+    recipient.value.name = userStore.user.contactName || '';
+    recipient.value.phone = userStore.user.phone || '';
+    recipient.value.address = userStore.user.address || '';
+    recipient.value.email = userStore.user.email || '';
+  }
+});
+
 const submitOrder = async () => {
   if (!cartStore.items.length) {
     toast.error('購物車是空的');
@@ -104,7 +117,6 @@ const submitOrder = async () => {
   }
   submitting.value = true;
   try {
-    // 這裡應呼叫後端 API 建立訂單，暫以模擬為主
     await ordersApi.createOrder({
       recipient: recipient.value,
       items: cartStore.items,
