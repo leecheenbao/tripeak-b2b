@@ -300,7 +300,7 @@ const quickActions = [
 ];
 
 // 訂單狀態處理
-const getStatusColor = (status) => {
+const getStatusColor = status => {
   const statusMap = {
     'pending': 'warning',
     'processing': 'info',
@@ -312,7 +312,7 @@ const getStatusColor = (status) => {
   return statusMap[status] || 'grey';
 };
 
-const getStatusText = (status) => {
+const getStatusText = status => {
   const statusMap = {
     'pending': '待處理',
     'processing': '處理中',
@@ -325,7 +325,7 @@ const getStatusText = (status) => {
 };
 
 // 格式化日期
-const formatDate = (dateStr) => {
+const formatDate = dateStr => {
   return format(new Date(dateStr), 'yyyy/MM/dd', { locale: zhTW });
 };
 
@@ -368,7 +368,7 @@ onMounted(() => {
 });
 
 // 取得商品圖片 API 路徑
-const getProductImageUrl = (item) => {
+const getProductImageUrl = item => {
   return item && item._id ? `/api/products/${item._id}/image` : '/images/no-image.jpg';
 };
 

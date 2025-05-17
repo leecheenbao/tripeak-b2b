@@ -1,11 +1,11 @@
-version: "3.9"
+version: "3.3"
 
 services:
   # 前端服務
   frontend:
     build: ./frontend
     ports:
-      - "80:80"
+      - "8889:80"
     depends_on:
       - backend
     networks:
@@ -60,9 +60,7 @@ services:
       - tripeak-network
 
 volumes:
-  mongodb_data:
-    name: tripeak-mongodb-data
+  mongodb_data: {}
 
 networks:
-  tripeak-network:
-    name: tripeak-network
+  tripeak-network: {}

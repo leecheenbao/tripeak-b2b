@@ -62,7 +62,7 @@ cp .env.example .env
 npm run dev
 ```
 
-後端服務將在 http://localhost:8080 運行。
+後端服務將在 http://localhost:8888 運行。
 
 ### 前端設置
 

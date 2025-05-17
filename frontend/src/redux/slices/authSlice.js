@@ -150,21 +150,21 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     // 登出 reducer
-    logout: (state) => {
+    logout: state => {
       localStorage.removeItem('token');
       state.token = null;
       state.user = null;
       state.isAuthenticated = false;
     },
     // 清除錯誤 reducer
-    clearError: (state) => {
+    clearError: state => {
       state.error = null;
     }
   },
-  extraReducers: (builder) => {
+  extraReducers: builder => {
     builder
       // 處理登錄
-      .addCase(login.pending, (state) => {
+      .addCase(login.pending, state => {
         state.isLoading = true;
         state.error = null;
       })
@@ -180,7 +180,7 @@ const authSlice = createSlice({
       })
       
       // 處理註冊
-      .addCase(register.pending, (state) => {
+      .addCase(register.pending, state => {
         state.isLoading = true;
         state.error = null;
       })
@@ -196,7 +196,7 @@ const authSlice = createSlice({
       })
       
       // 處理獲取當前用戶
-      .addCase(getCurrentUser.pending, (state) => {
+      .addCase(getCurrentUser.pending, state => {
         state.isLoading = true;
         state.error = null;
       })
@@ -215,7 +215,7 @@ const authSlice = createSlice({
       })
       
       // 處理更新用戶資料
-      .addCase(updateProfile.pending, (state) => {
+      .addCase(updateProfile.pending, state => {
         state.isLoading = true;
         state.error = null;
       })
@@ -229,11 +229,11 @@ const authSlice = createSlice({
       })
       
       // 處理更新密碼
-      .addCase(updatePassword.pending, (state) => {
+      .addCase(updatePassword.pending, state => {
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(updatePassword.fulfilled, (state) => {
+      .addCase(updatePassword.fulfilled, state => {
         state.isLoading = false;
       })
       .addCase(updatePassword.rejected, (state, action) => {
@@ -247,11 +247,11 @@ const authSlice = createSlice({
 export const { logout, clearError } = authSlice.actions;
 
 // 導出 selectors
-export const selectAuth = (state) => state.auth;
-export const selectUser = (state) => state.auth.user;
-export const selectIsAuthenticated = (state) => state.auth.isAuthenticated;
-export const selectAuthLoading = (state) => state.auth.isLoading;
-export const selectAuthError = (state) => state.auth.error;
+export const selectAuth = state => state.auth;
+export const selectUser = state => state.auth.user;
+export const selectIsAuthenticated = state => state.auth.isAuthenticated;
+export const selectAuthLoading = state => state.auth.isLoading;
+export const selectAuthError = state => state.auth.error;
 
 // 導出 reducer
 export default authSlice.reducer; 
