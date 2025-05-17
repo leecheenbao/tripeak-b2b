@@ -47,6 +47,9 @@ importers:
       vue-toastification:
         specifier: ^2.0.0-rc.5
         version: 2.0.0-rc.5(vue@3.5.13)
+      vuedraggable:
+        specifier: ^2.24.3
+        version: 2.24.3
       vuetify:
         specifier: ^3.2.1
         version: 3.8.2(vue@3.5.13)
@@ -1191,6 +1194,9 @@ packages:
     resolution: {integrity: sha512-7++dFhtcx3353uBaq8DDR4NuxBetBzC7ZQOhmTQInHEd6bSrXdiEyzCvG07Z44UYdLShWUyXt5M/yhz8ekcb1A==}
     engines: {node: '>=8'}
 
+  sortablejs@1.10.2:
+    resolution: {integrity: sha512-YkPGufevysvfwn5rfdlGyrGjt7/CRHwvRPogD/lC+TnvcN29jDpCifKP+rBqf+LRldfXSTh+0CGLcSg0VIxq3A==}
+
   source-map-js@1.2.1:
     resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
     engines: {node: '>=0.10.0'}
@@ -1368,6 +1374,9 @@ packages:
     peerDependenciesMeta:
       typescript:
         optional: true
+
+  vuedraggable@2.24.3:
+    resolution: {integrity: sha512-6/HDXi92GzB+Hcs9fC6PAAozK1RLt1ewPTLjK0anTYguXLAeySDmcnqE8IC0xa7shvSzRjQXq3/+dsZ7ETGF3g==}
 
   vuetify@3.8.2:
     resolution: {integrity: sha512-UJNFP4egmKJTQ3V3MKOq+7vIUKO7/Fko5G6yUsOW2Rm0VNBvAjgO6VY6EnK3DTqEKN6ugVXDEPw37NQSTGLZvw==}
@@ -2501,6 +2510,8 @@ snapshots:
 
   shebang-regex@3.0.0: {}
 
+  sortablejs@1.10.2: {}
+
   source-map-js@1.2.1: {}
 
   source-map-support@0.5.21:
@@ -2638,6 +2649,10 @@ snapshots:
       '@vue/runtime-dom': 3.5.13
       '@vue/server-renderer': 3.5.13(vue@3.5.13)
       '@vue/shared': 3.5.13
+
+  vuedraggable@2.24.3:
+    dependencies:
+      sortablejs: 1.10.2
 
   vuetify@3.8.2(vue@3.5.13):
     dependencies:
