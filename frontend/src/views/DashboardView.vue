@@ -256,6 +256,7 @@ import { format } from 'date-fns';
 import { zhTW } from 'date-fns/locale';
 import { ordersApi } from '@/api';
 import { useToast } from 'vue-toastification';
+import axios from 'axios';
 
 
 // Store
@@ -341,21 +342,32 @@ const fetchOrders = async () => {
   }
 };
 
+// 儀表板統計 API
+const fetchDashboardStats = async () => {
+  try {
+    const res = await ordersApi.getDashboardSummary();
+    if (res.data && res.data.success && res.data.data) {
+      stats.value.totalOrders = res.data.data.totalOrders;
+      stats.value.pendingOrders = res.data.data.pendingOrders;
+      stats.value.shippedOrders = res.data.data.shippedOrders;
+      stats.value.totalProducts = res.data.data.availableProducts;
+    }
+  } catch (error) {
+    toast.error('獲取儀表板統計失敗');
+  }
+};
+
 // 初始化页面数据
 const fetchDashboardData = async () => {
   loading.value = true;
-  
   try {
     // 獲取當前用戶資料
     await authStore.fetchCurrentUser();
-    
-    setTimeout(() => {
-      // 最近訂單
-      fetchOrders();
-
-      loading.value = false;
-    }, 1000);
-    
+    // 儀表板統計
+    await fetchDashboardStats();
+    // 最近訂單
+    await fetchOrders();
+    loading.value = false;
   } catch (error) {
     console.error('獲取儀表板數據失敗:', error);
     loading.value = false;

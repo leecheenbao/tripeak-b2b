@@ -300,6 +300,11 @@ export const ordersApi = {
       params,
       responseType: 'blob'
     });
+  },
+
+  // 儀表板統計
+  getDashboardSummary() {
+    return apiClient.get('/orders/dashboard/summary');
   }
 };
 
