@@ -539,7 +539,7 @@ const saveProduct = async () => {
       if (imageFile.value) {
         const formData = new FormData();
         formData.append('image', imageFile.value);
-        await productsApi.uploadImage(response.data._id, formData);
+        await productsApi.uploadImage(response.data.data._id, formData);
       }
 
       toast.success('產品創建成功');

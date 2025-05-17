@@ -355,10 +355,8 @@ exports.uploadProductImage = async (req, res) => {
     const product = await Product.findById(req.params.id);
 
     if (!product) {
-      return res.status(404).json({
-        success: false,
-        error: '產品不存在'
-      });
+      console.log('product not found')
+      this.createProduct(req, res)
     }
 
     if (!req.files || !req.files.image) {
