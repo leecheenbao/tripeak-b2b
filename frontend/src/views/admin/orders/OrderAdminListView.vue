@@ -15,7 +15,9 @@
           </v-col>
         </v-row>
       </v-card-text>
+      <!-- 桌機 datatable -->
       <v-data-table
+        v-if="!isMobile"
         :headers="headers"
         :items="orders"
         :loading="loading"
@@ -44,6 +46,32 @@
           </v-btn>
         </template>
       </v-data-table>
+      <!-- 手機卡片式 -->
+      <div v-else>
+        <v-card
+          v-for="item in orders"
+          :key="item._id"
+          class="mb-3 rwd-order-card"
+        >
+          <div class="font-weight-bold mb-1">訂單編號：{{ item.orderNumber }}</div>
+          <div class="mb-1">經銷商：{{ item.dealerName }}</div>
+          <div class="mb-1">
+            狀態：<v-chip :color="getStatusColor(item.status)" size="small">{{ getStatusText(item.status) }}</v-chip>
+          </div>
+          <div class="mb-1">總金額：<span class="text-primary">NT$ {{ item.totalAmount.toLocaleString() }}</span></div>
+          <div class="mb-1">建立日期：{{ formatDate(item.createdAt) }}</div>
+          <div class="mt-2">
+            <v-btn
+              icon
+              size="small"
+              variant="text"
+              :to="{ name: 'OrderDetail', params: { id: item._id } }"
+            >
+              <v-icon>mdi-eye</v-icon>
+            </v-btn>
+          </div>
+        </v-card>
+      </div>
     </v-card>
   </v-container>
 </template>
@@ -59,6 +87,7 @@ const orders = ref([]);
 const loading = ref(false);
 const toast = useToast();
 const statusFilter = ref(null);
+const isMobile = ref(false);
 
 const headers = [
   { title: '訂單編號', key: 'orderNumber', sortable: false },
@@ -125,6 +154,20 @@ const fetchOrders = async () => {
 };
 
 onMounted(() => {
+  const check = () => { isMobile.value = window.innerWidth <= 700; };
+  check();
+  window.addEventListener('resize', check);
   fetchOrders();
 });
-</script> 
+</script>
+
+<style scoped>
+@media (max-width: 700px) {
+  .rwd-order-card {
+    border-radius: 16px;
+    box-shadow: 0 2px 10px 0 rgba(60,60,60,0.07);
+    padding: 16px 12px;
+    margin-bottom: 18px;
+  }
+}
+</style> 

@@ -65,88 +65,161 @@
 
       <!-- 用戶列表 -->
       <v-card>
-        <v-data-table-server
-          v-model:items-per-page="itemsPerPage"
-          :headers="headers"
-          :items="users"
-          :items-length="totalUsers"
-          :loading="loading"
-          item-value="id"
-          class="elevation-0"
-          @update:options="handleTableUpdate"
-        >
-          <!-- 公司名稱 -->
-          <template v-slot:item.companyName="{ item }">
-            <div class="d-flex align-center">
-              <v-avatar size="36" color="primary" class="mr-3">
-                <span class="text-h6 text-white">{{ getInitials(item.companyName) }}</span>
-              </v-avatar>
-              <div class="font-weight-medium">{{ item.companyName }}</div>
-            </div>
-          </template>
-          
-          <!-- 用戶名稱 -->
-          <template v-slot:item.contactName="{ item }">
-            <div class="d-flex align-center">
-              <v-avatar size="36" color="primary" class="mr-3">
-                <span class="text-h6 text-white">{{ getInitials(item.contactName) }}</span>
-              </v-avatar>
-              <div>
-                <div class="font-weight-medium">{{ item.contactName }}</div>
-                <div class="text-caption text-grey">{{ item.email }}</div>
+        <template v-if="!isMobile">
+          <v-data-table-server
+            v-model:items-per-page="itemsPerPage"
+            :headers="headers"
+            :items="users"
+            :items-length="totalUsers"
+            :loading="loading"
+            item-value="id"
+            class="elevation-0"
+            @update:options="handleTableUpdate"
+          >
+            <!-- 公司名稱 -->
+            <template #item.companyName="{ item }">
+              <div class="d-flex align-center">
+                <v-avatar size="36" color="primary" class="mr-3">
+                  <span class="text-h6 text-white">{{ getInitials(item.companyName) }}</span>
+                </v-avatar>
+                <div class="font-weight-medium">{{ item.companyName }}</div>
               </div>
+            </template>
+            
+            <!-- 用戶名稱 -->
+            <template #item.contactName="{ item }">
+              <div class="d-flex align-center">
+                <v-avatar size="36" color="primary" class="mr-3">
+                  <span class="text-h6 text-white">{{ getInitials(item.contactName) }}</span>
+                </v-avatar>
+                <div>
+                  <div class="font-weight-medium">{{ item.contactName }}</div>
+                  <div class="text-caption text-grey">{{ item.email }}</div>
+                </div>
+              </div>
+            </template>
+
+            <!-- 角色 -->
+            <template #item.role="{ item }">
+              <v-chip
+                :color="getRoleColor(item.role)"
+                size="small"
+                class="text-caption"
+              >
+                {{ getRoleText(item.role) }}
+              </v-chip>
+            </template>
+
+            <!-- 狀態 -->
+            <template #item.isActive="{ item }">
+              <v-switch
+                v-model="item.isActive"
+                color="success"
+                hide-details
+                density="compact"
+                @change="toggleUserStatus(item)"
+              ></v-switch>
+            </template>
+
+            <!-- 創建時間 -->
+            <template #item.createdAt="{ item }">
+              {{ formatDate(item.createdAt) }}
+            </template>
+
+            <!-- 操作 -->
+            <template #item.actions="{ item }">
+              <v-btn
+                icon
+                size="small"
+                variant="text"
+                color="primary"
+                @click="editUser(item)"
+              >
+                <v-icon>mdi-pencil</v-icon>
+              </v-btn>
+              <v-btn
+                icon
+                size="small"
+                variant="text"
+                color="error"
+                @click="confirmDelete(item)"
+              >
+                <v-icon>mdi-delete</v-icon>
+              </v-btn>
+            </template>
+          </v-data-table-server>
+        </template>
+        <template v-else>
+          <v-card-text>
+            <v-row dense>
+              <v-col
+                v-for="item in users"
+                :key="item._id"
+                cols="12"
+              >
+                <v-card class="mb-3" outlined>
+                  <v-card-title class="d-flex align-center">
+                    <v-avatar size="36" color="primary" class="mr-3">
+                      <span class="text-h6 text-white">{{ getInitials(item.companyName) }}</span>
+                    </v-avatar>
+                    <span class="font-weight-medium">{{ item.companyName }}</span>
+                  </v-card-title>
+                  <v-card-subtitle class="d-flex align-center">
+                    <v-avatar size="36" color="primary" class="mr-3">
+                      <span class="text-h6 text-white">{{ getInitials(item.contactName) }}</span>
+                    </v-avatar>
+                    <div>
+                      <div class="font-weight-medium">{{ item.contactName }}</div>
+                      <div class="text-caption text-grey">{{ item.email }}</div>
+                    </div>
+                  </v-card-subtitle>
+                  <v-card-text>
+                    <div class="mb-1">
+                      <v-chip :color="getRoleColor(item.role)" size="small" class="text-caption mr-2">
+                        {{ getRoleText(item.role) }}
+                      </v-chip>
+                      <v-switch
+                        v-model="item.isActive"
+                        color="success"
+                        hide-details
+                        density="compact"
+                        @change="toggleUserStatus(item)"
+                        class="ml-2"
+                        label="啟用"
+                      ></v-switch>
+                    </div>
+                    <div class="text-caption text-grey mb-1">
+                      建立：{{ formatDate(item.createdAt) }}
+                    </div>
+                  </v-card-text>
+                  <v-card-actions>
+                    <v-btn
+                      icon
+                      size="small"
+                      variant="text"
+                      color="primary"
+                      @click="editUser(item)"
+                    >
+                      <v-icon>mdi-pencil</v-icon>
+                    </v-btn>
+                    <v-btn
+                      icon
+                      size="small"
+                      variant="text"
+                      color="error"
+                      @click="confirmDelete(item)"
+                    >
+                      <v-icon>mdi-delete</v-icon>
+                    </v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-col>
+            </v-row>
+            <div class="text-center text-caption mt-2">
+              共 {{ totalUsers }} 筆
             </div>
-          </template>
-
-          <!-- 角色 -->
-          <template v-slot:item.role="{ item }">
-            <v-chip
-              :color="getRoleColor(item.role)"
-              size="small"
-              class="text-caption"
-            >
-              {{ getRoleText(item.role) }}
-            </v-chip>
-          </template>
-
-          <!-- 狀態 -->
-          <template v-slot:item.isActive="{ item }">
-            <v-switch
-              v-model="item.isActive"
-              color="success"
-              hide-details
-              density="compact"
-              @change="toggleUserStatus(item)"
-            ></v-switch>
-          </template>
-
-          <!-- 創建時間 -->
-          <template v-slot:item.createdAt="{ item }">
-            {{ formatDate(item.createdAt) }}
-          </template>
-
-          <!-- 操作 -->
-          <template v-slot:item.actions="{ item }">
-            <v-btn
-              icon
-              size="small"
-              variant="text"
-              color="primary"
-              @click="editUser(item)"
-            >
-              <v-icon>mdi-pencil</v-icon>
-            </v-btn>
-            <v-btn
-              icon
-              size="small"
-              variant="text"
-              color="error"
-              @click="confirmDelete(item)"
-            >
-              <v-icon>mdi-delete</v-icon>
-            </v-btn>
-          </template>
-        </v-data-table-server>
+          </v-card-text>
+        </template>
       </v-card>
     </v-container>
 
@@ -280,6 +353,7 @@ import { usersApi } from '@/api';
 import { format } from 'date-fns';
 import { zhTW } from 'date-fns/locale';
 import { useToast } from 'vue-toastification';
+import { useDisplay } from 'vuetify';
 
 // Toast 通知
 const toast = useToast();
@@ -506,7 +580,7 @@ const toggleUserStatus = async (item) => {
 };
 
 // 輔助方法
-const getInitials = (contactName) => {
+const getInitials = contactName => {
   if (!contactName) return '';
   return contactName
     .split(' ')
@@ -516,7 +590,7 @@ const getInitials = (contactName) => {
     .substring(0, 2);
 };
 
-const getRoleColor = (role) => {
+const getRoleColor = role => {
   const roleColors = {
     admin: 'error',
     dealer: 'primary'
@@ -524,7 +598,7 @@ const getRoleColor = (role) => {
   return roleColors[role] || 'grey';
 };
 
-const getRoleText = (role) => {
+const getRoleText = role => {
   const roleTexts = {
     admin: '管理員',
     dealer: '經銷商'
@@ -532,7 +606,7 @@ const getRoleText = (role) => {
   return roleTexts[role] || '未知';
 };
 
-const formatDate = (dateStr) => {
+const formatDate = dateStr => {
   return format(new Date(dateStr), 'yyyy/MM/dd HH:mm', { locale: zhTW });
 };
 
@@ -540,10 +614,19 @@ const formatDate = (dateStr) => {
 onMounted(() => {
   fetchUsers();
 });
+
+const { mobile } = useDisplay();
+const isMobile = computed(() => mobile.value);
 </script>
 
 <style lang="scss" scoped>
 .user-management {
   padding-bottom: 2rem;
+}
+@media (max-width: 700px) {
+  .v-card {
+    border-radius: 12px;
+    box-shadow: 0 2px 8px 0 rgba(60,60,60,0.10);
+  }
 }
 </style> 

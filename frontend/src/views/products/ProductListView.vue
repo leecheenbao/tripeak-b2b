@@ -32,6 +32,7 @@
             mandatory
             rounded="lg"
             color="primary"
+            class="viewmode-toggle-rwd"
           >
             <v-btn icon value="grid">
               <v-icon>mdi-view-grid</v-icon>
@@ -626,6 +627,93 @@ onMounted(() => {
   
   :deep(.v-slider-track__fill) {
     opacity: 1;
+  }
+}
+
+@media (max-width: 700px) {
+  .products-page .d-flex.align-center.justify-space-between.mb-6 {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    margin-bottom: 18px !important;
+    h1 {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 18px;
+    }
+    > div {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+      .v-text-field, .v-btn, .v-btn-toggle {
+        width: 100%;
+        margin-bottom: 0;
+      }
+      .v-btn-toggle {
+        justify-content: center;
+        margin-bottom: 0;
+      }
+    }
+  }
+  .product-card {
+    border-radius: 18px;
+    box-shadow: 0 2px 10px 0 rgba(60,60,60,0.07);
+    margin-bottom: 22px;
+    padding: 10px 6px 18px 6px;
+    .v-img {
+      height: 140px !important;
+      border-radius: 12px 12px 0 0;
+    }
+    .v-card-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .v-card-subtitle {
+      font-size: 1.02rem;
+      color: #888;
+      margin-bottom: 10px;
+    }
+    .v-card-text {
+      padding: 8px 0 0 0;
+      font-size: 1.08rem;
+    }
+    .v-card-actions {
+      padding: 8px 0 0 0;
+      .v-btn {
+        font-size: 1.08rem;
+        min-width: 110px;
+        padding: 10px 0;
+      }
+      .v-btn:last-child {
+        min-width: 44px;
+      }
+    }
+    .v-rating {
+      font-size: 1.1rem;
+    }
+  }
+  .v-pagination {
+    width: 100%;
+    justify-content: center;
+    margin-bottom: 18px;
+  }
+  .v-text-field, .v-btn, .v-btn-toggle {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  .v-btn-toggle {
+    justify-content: center;
+  }
+  .v-sheet.d-flex.d-md-none.mb-4.align-center.justify-space-between {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    padding: 16px 8px !important;
+  }
+  .viewmode-toggle-rwd {
+    display: none !important;
   }
 }
 </style> 

@@ -50,7 +50,12 @@ export const useUiStore = defineStore('ui', {
       this.sidebar.isOpen = !this.sidebar.isOpen;
     },
     
+    setSidebarOpen(val) {
+      this.sidebar.isOpen = val;
+    },
+    
     setMiniVariant(value) {
+      console.log(value);
       this.sidebar.miniVariant = value;
     },
     

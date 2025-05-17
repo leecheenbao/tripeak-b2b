@@ -67,8 +67,8 @@
         </v-card-text>
       </v-card>
 
-      <!-- 產品列表 -->
-      <v-card>
+      <!-- 桌機 datatable -->
+      <v-card v-if="!isMobile">
         <v-data-table-server
           v-model:items-per-page="itemsPerPage"
           :headers="headers"
@@ -159,6 +159,38 @@
           </template>
         </v-data-table-server>
       </v-card>
+
+      <!-- 手機卡片式 -->
+      <div v-else>
+        <v-card
+          v-for="item in products"
+          :key="item.id"
+          class="mb-3 rwd-product-card"
+        >
+          <v-row no-gutters>
+            <v-col cols="3" class="d-flex align-center justify-center">
+              <v-avatar size="48" rounded>
+                <v-img :src="getProductImageUrl(item)" cover />
+              </v-avatar>
+            </v-col>
+            <v-col cols="9">
+              <div class="font-weight-bold mb-1">{{ item.name }}</div>
+              <div class="text-caption text-grey mb-1">{{ item.sku }}</div>
+              <div>分類：{{ item.category?.name }}</div>
+              <div>價格：<span class="text-primary">NT$ {{ item.price.toLocaleString() }}</span></div>
+              <div>庫存：{{ item.stockQuantity }}</div>
+              <div class="mt-2">
+                <v-btn icon size="small" variant="text" color="primary" @click="editProduct(item)">
+                  <v-icon>mdi-pencil</v-icon>
+                </v-btn>
+                <v-btn icon size="small" variant="text" color="error" @click="confirmDelete(item)">
+                  <v-icon>mdi-delete</v-icon>
+                </v-btn>
+              </div>
+            </v-col>
+          </v-row>
+        </v-card>
+      </div>
     </v-container>
 
     <!-- 產品編輯對話框 -->
@@ -362,6 +394,7 @@ const productToDelete = ref(null);
 const imageFile = ref(null);
 const page = ref(1);
 const imagePreviewUrl = ref(null);
+const isMobile = ref(false);
 
 // 編輯項目
 const defaultItem = {
@@ -617,11 +650,93 @@ const getProductImageUrl = item => `/api/products/${item._id}/image`;
 onMounted(() => {
   fetchProducts();
   fetchCategories();
+  const check = () => { isMobile.value = window.innerWidth <= 700; };
+  check();
+  window.addEventListener('resize', check);
 });
 </script>
 
 <style lang="scss" scoped>
 .product-management {
   padding-bottom: 2rem;
+}
+@media (max-width: 700px) {
+  .product-management .d-flex.align-center.justify-space-between.mb-6 {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    margin-bottom: 18px !important;
+    h1 {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 18px;
+    }
+    > .v-btn {
+      width: 100%;
+      margin-bottom: 16px;
+      font-size: 1.1rem;
+      justify-content: center;
+    }
+  }
+  .product-management .v-card.mb-6 {
+    border-radius: 16px;
+    box-shadow: 0 2px 10px 0 rgba(60,60,60,0.07);
+    margin-bottom: 18px;
+    padding: 8px 0 8px 0;
+  }
+  .product-management .v-card-text > .v-row {
+    flex-direction: column;
+    gap: 0;
+    > .v-col {
+      width: 100%;
+      max-width: 100%;
+      margin-bottom: 10px;
+    }
+    .v-btn {
+      width: 100%;
+      margin: 0;
+    }
+  }
+  .product-management .v-card {
+    border-radius: 16px;
+    box-shadow: 0 2px 10px 0 rgba(60,60,60,0.07);
+    margin-bottom: 18px;
+    overflow-x: auto;
+  }
+  .product-management .v-data-table-server {
+    min-width: 650px;
+    font-size: 0.92rem;
+    th, td {
+      padding: 6px 4px !important;
+      line-height: 1.2;
+    }
+    th {
+      font-size: 1.02rem;
+      font-weight: 700;
+      background: #fafbfc;
+    }
+    td {
+      font-size: 0.98rem;
+      vertical-align: middle;
+    }
+    .font-weight-medium {
+      font-size: 1.08rem;
+      font-weight: 700;
+    }
+    .v-text-field {
+      font-size: 1rem;
+      min-width: 60px;
+    }
+    .v-avatar {
+      width: 32px !important;
+      height: 32px !important;
+    }
+  }
+  .rwd-product-card {
+    border-radius: 16px;
+    box-shadow: 0 2px 10px 0 rgba(60,60,60,0.07);
+    padding: 14px 10px;
+    margin-bottom: 18px;
+  }
 }
 </style>
