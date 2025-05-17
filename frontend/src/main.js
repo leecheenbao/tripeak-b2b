@@ -91,9 +91,9 @@ import { setupApi } from './api';
 setupApi();
 
 app.use(pinia)
-   .use(router)
-   .use(vuetify)
-   .use(Toast, toastOptions);
+  .use(router)
+  .use(vuetify)
+  .use(Toast, toastOptions);
 
 // 全局錯誤處理
 app.config.errorHandler = (err, vm, info) => {

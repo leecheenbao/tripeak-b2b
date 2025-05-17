@@ -39,27 +39,28 @@
                   {{ success }}
                 </v-alert>
                 
-                <v-text-field
-                  v-model="email"
-                  :rules="[rules.required, rules.email]"
-                  label="電子郵件"
-                  prepend-inner-icon="mdi-email"
-                  variant="outlined"
-                  required
-                  autocomplete="email"
-                ></v-text-field>
-                
-                <v-btn
-                  type="submit"
-                  color="primary"
-                  variant="elevated"
-                  size="large"
-                  block
-                  :loading="loading"
-                  :disabled="loading"
-                >
-                  發送重設密碼連結
-                </v-btn>
+                <template v-if="!sent">
+                  <v-text-field
+                    v-model="email"
+                    :rules="[rules.required, rules.email]"
+                    label="電子郵件"
+                    prepend-inner-icon="mdi-email"
+                    variant="outlined"
+                    required
+                    autocomplete="email"
+                  ></v-text-field>
+                  <v-btn
+                    type="submit"
+                    color="primary"
+                    variant="elevated"
+                    size="large"
+                    block
+                    :loading="loading"
+                    :disabled="loading"
+                  >
+                    發送重設密碼連結
+                  </v-btn>
+                </template>
                 
                 <div class="text-center mt-6">
                   <span class="text-caption">記起密碼了？</span>
@@ -81,17 +82,14 @@
 
 <script setup>
 import { ref, reactive, computed } from 'vue';
-import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
-
-// 路由
-const router = useRouter();
 
 // 表單數據
 const email = ref('');
 const form = ref(null);
 const error = ref('');
 const success = ref('');
+const sent = ref(false);
 
 // 驗證規則
 const rules = reactive({
@@ -122,6 +120,8 @@ const handleSubmit = async () => {
     
     // 清空表單
     email.value = '';
+    
+    sent.value = true;
     
   } catch (err) {
     error.value = err.response?.data?.error || '發送重設密碼連結失敗，請稍後再試';

@@ -67,7 +67,7 @@
                 <v-list-item-title>{{ category.name }}</v-list-item-title>
                 <template #append>
                   <v-badge
-                    :content="category.count"
+                    :content="category.productCount"
                     color="primary"
                     inline
                   />
@@ -349,7 +349,7 @@
             <v-list-item-title>{{ category.name }}</v-list-item-title>
             <template #append>
               <v-badge
-                :content="category.count"
+                :content="category.productCount"
                 color="primary"
                 inline
               />
@@ -514,13 +514,14 @@ const fetchProducts = async (options = {}) => {
 const fetchCategories = async () => {
   try {
     const response = await categoriesApi.getCategories();
-    // 添加"全部產品"選項
+    // 統計全部產品數量
+    const totalCount = response.data.data.reduce((sum, cat) => sum + (cat.productCount || 0), 0);
     categories.value = [
-      { id: 'all', name: '全部產品', count: response.data.total || 0 },
+      { id: 'all', name: '全部產品', productCount: totalCount },
       ...response.data.data.map(category => ({
         id: category._id,
         name: category.name,
-        count: category.count || 0
+        productCount: category.productCount || 0
       }))
     ];
   } catch (error) {

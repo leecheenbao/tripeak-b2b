@@ -5,6 +5,7 @@ import { useAuthStore } from '@/stores/auth';
 const Login = () => import('@/views/auth/LoginView.vue');
 const Register = () => import('@/views/auth/RegisterView.vue');
 const ForgotPassword = () => import('@/views/auth/ForgotPasswordView.vue');
+const ResetPassword = () => import('@/views/auth/ResetPasswordView.vue');
 const NotFound = () => import('@/views/NotFoundView.vue');
 
 // 路由組件 - 需要認證的頁面
@@ -49,7 +50,12 @@ const routes = [
     component: ForgotPassword,
     meta: { requiresAuth: false, title: '忘記密碼' }
   },
-  
+  {
+    path: '/reset-password',
+    name: 'ResetPassword',
+    component: ResetPassword,
+    meta: { requiresAuth: false, title: '重設密碼' }
+  },
   // 經銷商路由
   {
     path: '/',
