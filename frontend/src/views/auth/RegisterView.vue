@@ -40,7 +40,7 @@
                 ></v-text-field>
                 
                 <v-text-field
-                  v-model="name"
+                  v-model="contactName"
                   :rules="[rules.required]"
                   label="聯絡人姓名"
                   prepend-inner-icon="mdi-account"
@@ -151,7 +151,7 @@ import { useAuthStore } from '@/stores/auth';
 const router = useRouter();
 
 // 表單數據
-const name = ref('');
+const contactName = ref('');
 const companyName = ref('');
 const email = ref('');
 const phone = ref('');
@@ -190,7 +190,7 @@ const handleRegister = async () => {
     
     // 準備註冊數據
     const registerData = {
-      name: name.value,
+      contactName: contactName.value,
       companyName: companyName.value,
       email: email.value,
       phone: phone.value,

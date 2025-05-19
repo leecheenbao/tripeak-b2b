@@ -15,8 +15,9 @@ require('dotenv').config();
  */
 exports.register = async (req, res) => {
   try {
-    const { name, email, password, companyName, phone, address, lineId, role } = req.body;
+    const { companyName, contactName, email, password, phone, address, lineId, role } = req.body;
 
+    console.log(req.body);
     // 檢查是否已存在相同郵箱
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -36,10 +37,10 @@ exports.register = async (req, res) => {
 
     // 創建用戶
     const user = await User.create({
-      name,
+      companyName,
+      contactName,
       email,
       password,
-      companyName,
       phone,
       address,
       lineId,
