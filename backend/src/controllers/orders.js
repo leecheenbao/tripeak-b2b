@@ -3,7 +3,7 @@ const Product = require('../models/Product');
 const User = require('../models/User');
 const logger = require('../utils/logger');
 const ExcelJS = require('exceljs');
-const lineService = require('../services/line');
+// const lineService = require('../services/line');
 
 /**
  * @desc    獲取所有訂單
@@ -210,7 +210,7 @@ exports.createOrder = async (req, res) => {
 
     // 發送 LINE 通知
     try {
-      await lineService.sendOrderNotification('order_created', completeOrder);
+      // await lineService.sendOrderNotification('order_created', completeOrder);
     } catch (notifyErr) {
       logger.error(`發送訂單通知失敗: ${notifyErr.message}`);
     }
@@ -279,12 +279,12 @@ exports.updateOrderStatus = async (req, res) => {
 
     // 發送 LINE 通知
     try {
-      await lineService.sendOrderNotification(
-        status === 'processing' ? 'order_processing' : 
-        status === 'shipped' ? 'order_shipped' : 
-        status === 'completed' ? 'order_completed' : 'order_status_update',
-        updatedOrder
-      );
+      // await lineService.sendOrderNotification(
+      //   status === 'processing' ? 'order_processing' : 
+      //   status === 'shipped' ? 'order_shipped' : 
+      //   status === 'completed' ? 'order_completed' : 'order_status_update',
+      //   updatedOrder
+      // );
     } catch (notifyErr) {
       logger.error(`發送訂單狀態更新通知失敗: ${notifyErr.message}`);
     }
