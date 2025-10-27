@@ -22,6 +22,7 @@ router.get('/logout', protect, logout);
 router.put('/updatedetails', protect, updateDetails);
 router.put('/updatepassword', protect, updatePassword);
 router.put('/update-profile', protect, updateProfile);
+router.put('/me', protect, updateProfile); // 新增：更新當前用戶資料（用於 LINE 綁定）
 router.post('/forgot-password', forgotPassword);
 router.post('/reset-password', resetPassword);
 

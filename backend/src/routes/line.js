@@ -5,13 +5,21 @@ const {
   createMessage,
   updateMessage,
   deleteMessage,
-  sendMessage
+  sendMessage,
+  sendTestMessage
 } = require('../controllers/line');
 const { protect, authorize } = require('../middleware/auth');
+const { handleWebhook, lineWebhookMiddleware } = require('../controllers/webhook');
 
 const router = express.Router();
 
-// 保護所有路由（必須登錄且必須是管理員）
+// Webhook 端點（LINE 專用，不需要身份驗證）
+router.post('/webhook', 
+  lineWebhookMiddleware,
+  handleWebhook
+);
+
+// 以下路由需要身份驗證
 router.use(protect);
 router.use(authorize('admin'));
 
@@ -27,5 +35,9 @@ router.route('/messages/:id')
 
 // 發送消息路由
 router.post('/messages/:id/send', sendMessage);
+
+// 發送測試消息
+router.post('/test-message', sendTestMessage);
+
 
 module.exports = router; 

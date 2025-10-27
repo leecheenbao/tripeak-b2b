@@ -26,16 +26,28 @@ const connectDB = async () => {
 };
 
 // 初始管理員用戶
-const adminUser = {
+const adminUser = [
+  {
   contactName: 'Admin Paul',
   email: 'leecheenbao@gmail.com',
+  password: '111111',
+  role: 'admin',
+  companyName: 'paul-test',
+  phone: '0912345678',
+  address: 'paul-test 總公司',
+  isActive: true
+},
+{
+  contactName: '尼佛',
+  email: 'test@test.com',
   password: '111111',
   role: 'admin',
   companyName: 'TRiPEAK',
   phone: '0912345678',
   address: 'TRiPEAK 總公司',
   isActive: true
-};
+}
+];
 
 // 插入示範經銷商
 const dealers = [
@@ -159,7 +171,9 @@ const importData = async () => {
     logger.info('清除現有資料');
 
     // 創建管理員用戶
-    await User.create(adminUser);
+    for (const admin of adminUser) {
+      await User.create(admin);
+    }
     logger.info('創建管理員用戶');
 
     // 匯入分類

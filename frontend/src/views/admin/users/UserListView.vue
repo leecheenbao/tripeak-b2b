@@ -2,7 +2,9 @@
   <div class="user-management">
     <v-container>
       <div class="d-flex align-center justify-space-between mb-6">
-        <h1 class="text-h4 font-weight-bold">用戶管理</h1>
+        <h1 class="text-h4 font-weight-bold">
+          用戶管理
+        </h1>
         <v-btn
           color="primary"
           prepend-icon="mdi-account-plus"
@@ -25,7 +27,7 @@
                 density="comfortable"
                 hide-details
                 @update:model-value="handleSearch"
-              ></v-text-field>
+              />
             </v-col>
             <v-col cols="12" sm="3">
               <v-select
@@ -36,7 +38,7 @@
                 density="comfortable"
                 hide-details
                 @update:model-value="handleFilter"
-              ></v-select>
+              />
             </v-col>
             <v-col cols="12" sm="3">
               <v-select
@@ -47,14 +49,14 @@
                 density="comfortable"
                 hide-details
                 @update:model-value="handleFilter"
-              ></v-select>
+              />
             </v-col>
             <v-col cols="12" sm="2" class="d-flex align-center">
               <v-btn
                 color="primary"
                 variant="text"
-                @click="resetFilters"
                 class="ml-auto"
+                @click="resetFilters"
               >
                 重置
               </v-btn>
@@ -82,7 +84,9 @@
                 <v-avatar size="36" color="primary" class="mr-3">
                   <span class="text-h6 text-white">{{ getInitials(item.companyName) }}</span>
                 </v-avatar>
-                <div class="font-weight-medium">{{ item.companyName }}</div>
+                <div class="font-weight-medium">
+                  {{ item.companyName }}
+                </div>
               </div>
             </template>
             
@@ -93,8 +97,12 @@
                   <span class="text-h6 text-white">{{ getInitials(item.contactName) }}</span>
                 </v-avatar>
                 <div>
-                  <div class="font-weight-medium">{{ item.contactName }}</div>
-                  <div class="text-caption text-grey">{{ item.email }}</div>
+                  <div class="font-weight-medium">
+                    {{ item.contactName }}
+                  </div>
+                  <div class="text-caption text-grey">
+                    {{ item.email }}
+                  </div>
                 </div>
               </div>
             </template>
@@ -118,7 +126,7 @@
                 hide-details
                 density="compact"
                 @change="toggleUserStatus(item)"
-              ></v-switch>
+              />
             </template>
 
             <!-- 創建時間 -->
@@ -169,8 +177,12 @@
                       <span class="text-h6 text-white">{{ getInitials(item.contactName) }}</span>
                     </v-avatar>
                     <div>
-                      <div class="font-weight-medium">{{ item.contactName }}</div>
-                      <div class="text-caption text-grey">{{ item.email }}</div>
+                      <div class="font-weight-medium">
+                        {{ item.contactName }}
+                      </div>
+                      <div class="text-caption text-grey">
+                        {{ item.email }}
+                      </div>
                     </div>
                   </v-card-subtitle>
                   <v-card-text>
@@ -183,10 +195,10 @@
                         color="success"
                         hide-details
                         density="compact"
-                        @change="toggleUserStatus(item)"
                         class="ml-2"
                         label="啟用"
-                      ></v-switch>
+                        @change="toggleUserStatus(item)"
+                      />
                     </div>
                     <div class="text-caption text-grey mb-1">
                       建立：{{ formatDate(item.createdAt) }}
@@ -239,7 +251,7 @@
               label="公司名稱"
               variant="outlined"
               required
-            ></v-text-field>
+            />
             
             <v-text-field
               v-model="editedItem.contactName"
@@ -247,7 +259,7 @@
               :rules="[rules.required]"
               variant="outlined"
               required
-            ></v-text-field>
+            />
             
             <v-text-field
               v-model="editedItem.email"
@@ -256,14 +268,14 @@
               variant="outlined"
               required
               :disabled="isEdit"
-            ></v-text-field>
+            />
 
             <v-text-field
               v-model="editedItem.phone"
               label="電話"
               variant="outlined"
               required
-            ></v-text-field>
+            />
             
             <v-text-field
               v-if="!isEdit"
@@ -275,7 +287,7 @@
               required
               :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
               @click:append-inner="showPassword = !showPassword"
-            ></v-text-field>
+            />
             
             <v-select
               v-model="editedItem.role"
@@ -283,18 +295,18 @@
               :items="roleOptions"
               variant="outlined"
               required
-            ></v-select>
+            />
             
             <v-switch
               v-model="editedItem.isActive"
               label="啟用帳號"
               color="success"
               hide-details
-            ></v-switch>
+            />
           </v-form>
         </v-card-text>
         <v-card-actions>
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
             color="grey-darken-1"
             variant="text"
@@ -305,8 +317,8 @@
           <v-btn
             color="primary"
             variant="text"
-            @click="saveUser"
             :loading="saving"
+            @click="saveUser"
           >
             保存
           </v-btn>
@@ -320,12 +332,14 @@
       max-width="400px"
     >
       <v-card>
-        <v-card-title class="text-h5">確認刪除</v-card-title>
+        <v-card-title class="text-h5">
+          確認刪除
+        </v-card-title>
         <v-card-text>
           您確定要刪除用戶 <strong>{{ userToDelete?.contactName }}</strong> 嗎？此操作無法撤銷。
         </v-card-text>
         <v-card-actions>
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
             color="grey-darken-1"
             variant="text"
@@ -336,8 +350,8 @@
           <v-btn
             color="error"
             variant="text"
-            @click="deleteUser"
             :loading="deleting"
+            @click="deleteUser"
           >
             刪除
           </v-btn>
@@ -444,7 +458,7 @@ const fetchUsers = async (options = {}) => {
   }
 };
 
-const handleTableUpdate = (options) => {
+const handleTableUpdate = options => {
   const { page, itemsPerPage, sortBy, sortDesc } = options;
   
   fetchUsers({
@@ -476,7 +490,7 @@ const openCreateDialog = () => {
   dialog.value = true;
 };
 
-const editUser = (item) => {
+const editUser = item => {
   isEdit.value = true;
   editedItem.value = { ...item };
   dialog.value = true;
@@ -534,7 +548,7 @@ const saveUser = async () => {
   }
 };
 
-const confirmDelete = (item) => {
+const confirmDelete = item => {
   userToDelete.value = item;
   deleteDialog.value = true;
 };
@@ -564,7 +578,7 @@ const deleteUser = async () => {
   }
 };
 
-const toggleUserStatus = async (item) => {
+const toggleUserStatus = async item => {
   try {
     await usersApi.updateUser(item._id, {
       isActive: item.isActive

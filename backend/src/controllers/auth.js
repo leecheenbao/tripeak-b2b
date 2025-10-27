@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const Conversation = require('../models/Conversation');
 const logger = require('../utils/logger');
 const jwt = require('jsonwebtoken');
 const express = require('express');
@@ -219,25 +220,74 @@ exports.updatePassword = async (req, res) => {
 
 exports.updateProfile = async (req, res) => {
   try {
-    const user = await User.findByIdAndUpdate(req.user.id, req.body, {
-      new: true,
-      runValidators: true
+    const allowedFields = ['contactName', 'companyName', 'phone', 'address', 'lineId'];
+    const updates = {};
+    
+    // 處理更新和移除邏輯
+    let shouldRemoveLineId = false;
+    
+    Object.keys(req.body).forEach(key => {
+      if (allowedFields.includes(key)) {
+        const value = req.body[key];
+        
+        // 特殊處理 lineId
+        if (key === 'lineId') {
+          if (value === null || value === '' || value === undefined) {
+            shouldRemoveLineId = true;
+          } else {
+            updates[key] = value;
+          }
+        } else if (value !== undefined && value !== null) {
+          updates[key] = value;
+        }
+      }
     });
 
+    logger.info(`準備更新欄位: ${JSON.stringify(updates)}`);
+    logger.info(`需要移除 lineId: ${shouldRemoveLineId}`);
 
-    // 更改資料
-    user.contactName = req.body.contactName;
-    user.companyName = req.body.companyName;
-    user.phone = req.body.phone;
-    user.address = req.body.address;
-    user.lineId = req.body.lineId;
-
-    await user.save();
+    // 獲取用戶
+    const user = await User.findById(req.user.id);
     
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        error: '用戶不存在'
+      });
+    }
+
+    // 更新或移除欄位
+    if (shouldRemoveLineId) {
+      // 先保存當前的 lineId，用於刪除 conversations
+      const oldLineId = user.lineId;
+      
+      if (oldLineId) {
+        // 刪除對應的 conversations
+        const deleteResult = await Conversation.deleteMany({ lineId: oldLineId });
+        logger.info(`解除綁定：已刪除 ${deleteResult.deletedCount} 個 conversations，lineId: ${oldLineId}`);
+      }
+      
+      // 使用 $unset 操作符移除 lineId
+      await User.updateOne(
+        { _id: req.user.id },
+        { $unset: { lineId: '' } }
+      );
+    }
+    
+    // 更新其他欄位
+    if (Object.keys(updates).length > 0) {
+      Object.keys(updates).forEach(key => {
+        user[key] = updates[key];
+      });
+      await user.save();
+    }
+    
+    // 重新獲取更新後的用戶資料
+    const updatedUser = await User.findById(req.user.id);
 
     res.status(200).json({
       success: true,
-      data: user
+      data: updatedUser
     });
   } catch (err) {
     logger.error(`更新用戶資料失敗: ${err.message}`);

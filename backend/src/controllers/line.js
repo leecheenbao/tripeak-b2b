@@ -331,6 +331,148 @@ exports.sendMessage = async (req, res) => {
 };
 
 /**
+ * 發送測試消息
+ * 
+ * 注意：
+ * - pushMessage 需要用戶已成為好友
+ * - replyMessage 需要 replyToken（只能透過 webhook 回覆）
+ * - 最佳測試方式：讓用戶在 LINE 中發送消息，系統自動回覆
+ */
+exports.sendTestMessage = async (req, res) => {
+  try {
+    const { lineId } = req.body;
+    const user = req.user;
+
+    // 如果沒有傳入 lineId，使用當前用戶的 lineId
+    const targetLineId = lineId || user.lineId;
+
+    if (!targetLineId) {
+      return res.status(400).json({
+        success: false,
+        error: '請提供 LINE User ID'
+      });
+    }
+
+    // 檢查環境變數
+    if (!process.env.LINE_CHANNEL_ACCESS_TOKEN || !process.env.LINE_CHANNEL_SECRET) {
+      logger.error('LINE Bot 環境變數未配置');
+      return res.status(500).json({
+        success: false,
+        error: 'LINE Bot 環境變數未配置'
+      });
+    }
+    
+    // 使用 LINE Bot 客戶端發送測試消息
+    const line = require('@line/bot-sdk');
+    const lineClient = new line.Client({
+      channelAccessToken: process.env.LINE_CHANNEL_ACCESS_TOKEN,
+      channelSecret: process.env.LINE_CHANNEL_SECRET
+    });
+
+    logger.info(`嘗試發送測試消息給 ${targetLineId}`);
+
+    // 方法 1: 使用 pushMessage（推播消息）
+    // 根據 LINE Bot SDK，消息可以是單個對象或陣列
+    const message = {
+      type: 'text',
+      text: `這是來自 TRiPEAK B2B 系統的測試消息！
+
+訊息時間：${new Date().toLocaleString('zh-TW')}
+綁定帳號：${user.email}
+
+如果您收到此消息，表示 LINE Bot 綁定成功！`
+    };
+
+    logger.info(`準備發送消息給 User ID: ${targetLineId}`);
+    logger.info(`消息類型: ${message.type}`);
+    logger.info(`Channel Access Token 開頭: ${process.env.LINE_CHANNEL_ACCESS_TOKEN?.substring(0, 20)}...`);
+    logger.info(`Channel Secret: ${process.env.LINE_CHANNEL_SECRET?.substring(0, 10)}...`);
+
+    try {
+      logger.info(`使用 pushMessage 發送給 User ID: ${targetLineId}`);
+      logger.info(`消息內容: ${message.text.substring(0, 50)}...`);
+      
+      // 使用 pushMessage 發送消息（單個消息對象）
+      const result = await lineClient.pushMessage(targetLineId, message);
+      logger.info(`成功使用 pushMessage 發送消息: ${JSON.stringify(result)}`);
+      
+      res.status(200).json({
+        success: true,
+        message: '測試消息已發送'
+      });
+    } catch (pushError) {
+      logger.error(`pushMessage 失敗: ${pushError.message}`);
+      logger.error(`錯誤堆疊: ${pushError.stack}`);
+      
+      // 記錄詳細錯誤
+      if (pushError.response) {
+        logger.error(`錯誤狀態碼: ${pushError.response.status}`);
+        logger.error(`錯誤標頭: ${JSON.stringify(pushError.response.headers)}`);
+        logger.error(`錯誤數據: ${JSON.stringify(pushError.response.data)}`);
+        logger.error(`請求 URL: ${pushError.request?.responseURL || pushError.config?.url}`);
+        logger.error(`請求方法: ${pushError.config?.method}`);
+        logger.error(`請求標頭: ${JSON.stringify(pushError.config?.headers)}`);
+        if (pushError.config?.data) {
+          logger.error(`請求數據類型: ${typeof pushError.config.data}`);
+          logger.error(`請求數據: ${JSON.stringify(pushError.config.data)}`);
+        }
+      } else {
+        logger.error(`錯誤對象: ${JSON.stringify(pushError)}`);
+      }
+      
+      // LINE API 400 錯誤通常是因為用戶未成為好友
+      if (pushError.response && pushError.response.status === 400) {
+        const errorData = pushError.response.data || {};
+        logger.error(`LINE API 400 錯誤詳情: ${JSON.stringify(errorData, null, 2)}`);
+        
+        // 返回友好的錯誤訊息，但不拋出異常
+        return res.status(200).json({
+          success: false,
+          message: '測試消息發送失敗',
+          error: `無法發送消息。可能原因：
+1. 用戶尚未將機器人加為好友（最常見）
+2. User ID 不正確
+3. Messaging API 未啟用
+
+請在 LINE 中找到機器人並加為好友後再試。`,
+          details: errorData
+        });
+      }
+      
+      throw pushError;
+    }
+  } catch (err) {
+    logger.error(`發送測試消息失敗: ${err.message}`);
+    logger.error(`詳細錯誤: ${err.stack}`);
+    
+    // 提供更詳細的錯誤信息
+    let errorMessage = '發送測試消息失敗';
+    
+    if (err.response) {
+      // LINE API 返回的錯誤
+      logger.error(`LINE API 錯誤狀態: ${err.response.status}`);
+      if (err.response.data) {
+        logger.error(`LINE API 錯誤資料: ${JSON.stringify(err.response.data, null, 2)}`);
+        errorMessage = `LINE API 錯誤 (${err.response.status}): ${JSON.stringify(err.response.data)}`;
+      } else {
+        logger.error(`LINE API 沒有返回錯誤資料`);
+        errorMessage = `LINE API 錯誤 (${err.response.status}): 無詳細信息`;
+      }
+    } else if (err.request) {
+      logger.error(`LINE API 請求失敗，無響應: ${JSON.stringify(err.request)}`);
+      errorMessage = '無法連接到 LINE API';
+    } else {
+      errorMessage = err.message || '未知錯誤';
+    }
+    
+    res.status(500).json({
+      success: false,
+      error: errorMessage
+    });
+  }
+};
+
+/**
  * 驗證消息內容格式
  */
 function validateMessageContent(type, content) {
