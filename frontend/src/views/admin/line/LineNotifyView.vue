@@ -145,7 +145,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useToast } from 'vue-toastification';
-import axios from 'axios';
+import { authApi, lineApi } from '@/api';
 import { useAuthStore } from '@/stores/auth';
 
 const authStore = useAuthStore();
@@ -180,9 +180,7 @@ const lineIdRules = [
 // 查詢綁定狀態
 const fetchStatus = async () => {
   try {
-    const response = await axios.get('/api/auth/me', {
-      headers: { Authorization: `Bearer ${authStore.token}` }
-    });
+    const response = await authApi.getCurrentUser();
     
     const userData = response.data.data || response.data;
     isBound.value = !!userData.lineId;
@@ -199,14 +197,10 @@ const fetchStatus = async () => {
 
 // 綁定 LINE 機器人
 const bindLine = async () => {
-  // if (!formValid.value) return;
   
   binding.value = true;
   try {
-    const _response = await axios.put('/api/auth/me', 
-      { lineId: lineId.value },
-      { headers: { Authorization: `Bearer ${authStore.token}` } }
-    );
+    const _response = await authApi.updateProfile({ lineId: lineId.value });
     
     // 更新 auth store 中的用戶資訊
     if (_response.data && _response.data.data) {
@@ -233,10 +227,7 @@ const bindLine = async () => {
 // 確認解除綁定
 const confirmUnbind = async () => {
   try {
-    const _response = await axios.put('/api/auth/me',
-      { lineId: null },
-      { headers: { Authorization: `Bearer ${authStore.token}` } }
-    );
+    const _response = await authApi.updateProfile({ lineId: null });
     
     // 更新 auth store 中的用戶資訊
     if (_response.data && _response.data.data) {
@@ -269,16 +260,17 @@ const sendTest = async () => {
   sendingTest.value = true;
   try {
     // 發送測試消息
-    const _response = await axios.post('/api/line/test-message',
-      { lineId: currentLineId.value },
-      { headers: { Authorization: `Bearer ${authStore.token}` } }
-    );
+    const _response = await lineApi.sendTestMessage(currentLineId.value);
     
-    toast.success('測試訊息已發送！');
-    lastMessage.value = `測試訊息已發送 - ${new Date().toLocaleString('zh-TW')}`;
+    if (_response.data.success) {
+      toast.success('測試訊息已發送！');
+      lastMessage.value = `測試訊息已發送 - ${new Date().toLocaleString('zh-TW')}`;
+    } else {
+      toast.error(_response.data.error || '發送失敗');
+    }
   } catch (error) {
     console.error('發送失敗:', error);
-    toast.error(error.response?.data?.error || '發送失敗');
+    toast.error(error.response?.data?.error || error.response?.data?.message || '發送失敗');
   } finally {
     sendingTest.value = false;
   }

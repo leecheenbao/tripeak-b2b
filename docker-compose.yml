@@ -16,12 +16,15 @@ services:
     build: ./backend
     ports:
       - "8888:8888"
+    env_file:
+      - ./backend/.env
     environment:
-      - NODE_ENV=production
+      # Docker 內部服務地址覆蓋
       - MONGO_URI=mongodb://mongodb:27017/tripeak-b2b
-      # 其他後端環境變數可加在這裡
+      - OLLAMA_URL=http://ollama:11434
     depends_on:
       - mongodb
+      - ollama
     networks:
       - tripeak-network
 
@@ -59,8 +62,64 @@ services:
     networks:
       - tripeak-network
 
+  # Ollama NLU 服務
+  ollama:
+    image: ollama/ollama:latest
+    container_name: tripeak-ollama
+    restart: always
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    environment:
+      - OLLAMA_MODEL=${OLLAMA_MODEL:-tinyllama:latest}
+    networks:
+      - tripeak-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # Ollama 模型自動下載服務（可選，用於首次啟動時自動下載模型）
+  ollama-init:
+    image: curlimages/curl:latest
+    container_name: tripeak-ollama-init
+    restart: "no"
+    depends_on:
+      ollama:
+        condition: service_healthy
+    environment:
+      - OLLAMA_MODEL=${OLLAMA_MODEL:-tinyllama:latest}
+    networks:
+      - tripeak-network
+    command:
+      - sh
+      - -c
+      - |
+        echo "等待 Ollama 服務就緒..."
+        sleep 10
+        
+        echo "檢查模型是否已下載..."
+        
+        # 檢查模型是否已存在
+        MODEL_EXISTS=$$(curl -s http://ollama:11434/api/tags | grep -c "$$OLLAMA_MODEL" || echo "0")
+        
+        if [ "$$MODEL_EXISTS" = "0" ]; then
+          echo "📦 開始下載模型: $$OLLAMA_MODEL"
+          
+          # 通過 API 下載模型
+          curl -X POST http://ollama:11434/api/pull -d "{\"name\":\"$$OLLAMA_MODEL\"}"
+          
+          echo "✅ 模型下載完成: $$OLLAMA_MODEL"
+        else
+          echo "✅ 模型 $$OLLAMA_MODEL 已存在，跳過下載"
+        fi
+
 volumes:
   mongodb_data: {}
+  ollama_data: {}
 
 networks:
   tripeak-network: {}

@@ -97,8 +97,22 @@ cd frontend
 npm run build
 ```
 
-## 部署指南
+#### 安裝 Ollama
 
-詳細的部署指南請參閱 `docs/deployment.md`。
+```bash
+# macOS
+brew install ollama
+
+# Linux
+curl -fsSL https://ollama.ai/install.sh | sh
+```
+
+#### 下載模型
+
+```bash
+ollama pull llama2:7b-chat-q4_0
+# 或使用更小的模型
+ollama pull tinyllama:latest
+```
 
 © 2025 Paul Lee. 版權所有。 

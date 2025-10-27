@@ -130,6 +130,11 @@ export const authApi = {
   
   // 更新個人資料
   updateProfile(data) {
+    return apiClient.put('/auth/me', data);
+  },
+  
+  // 更新個人資料（舊版接口，向後兼容）
+  updateDetails(data) {
     return apiClient.put('/auth/updatedetails', data);
   },
   
@@ -305,6 +310,14 @@ export const ordersApi = {
   // 儀表板統計
   getDashboardSummary() {
     return apiClient.get('/orders/dashboard/summary');
+  }
+};
+
+// API 服務 - LINE Bot
+export const lineApi = {
+  // 發送測試消息
+  sendTestMessage(lineId) {
+    return apiClient.post('/line/test-message', { lineId });
   }
 };
 
