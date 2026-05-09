@@ -271,11 +271,11 @@ gantt
 
 **查核項目**
 
-1. 專案章程（Project Charter）已核准，範疇、目標與交付物定義明確
-2. 團隊角色已分配（1 PM + 5 工程師），聯絡窗口確認
-3. 開發環境已建置：Node.js、Vue CLI、MongoDB、Docker、Git 倉庫
-4. `.env.example` 草稿完成，必要環境變數（DB 連線、JWT Secret、LINE Token）已識別
-5. WBS 第 2 層工作包（`88.1`～`88.4`）已確認，初版 Backlog 已建立
+- [ ] 專案章程（Project Charter）已核准，範疇、目標與交付物定義明確
+- [ ] 團隊角色已分配（1 PM + 5 工程師），聯絡窗口確認
+- [ ] 開發環境已建置：Node.js、Vue CLI、MongoDB、Docker、Git 倉庫
+- [ ] `.env.example` 草稿完成，必要環境變數（DB 連線、JWT Secret、LINE Token）已識別
+- [ ] WBS 第 2 層工作包（`88.1`～`88.4`）已確認，初版 Backlog 已建立
 
 ---
 
@@ -288,11 +288,11 @@ gantt
 
 **查核項目**
 
-1. 系統架構圖（前端 Vue 3 ↔ Express API ↔ MongoDB）已定稿並版本化
-2. MongoDB 集合設計（User、Product、Order、Category、LineMessage 等）已完成 ERD
-3. 角色與權限矩陣（Admin / Dealer）確認，對應路由守衛策略
-4. Docker Compose 初版架構（`backend`、`frontend`、`mongo`、`ollama` 服務）草稿完成
-5. 技術選型決策紀錄（ADR）完成：JWT 演算法、密碼雜湊方案（bcrypt）、Vuetify 版本
+- [ ] 系統架構圖（前端 Vue 3 ↔ Express API ↔ MongoDB）已定稿並版本化
+- [ ] MongoDB 集合設計（User、Product、Order、Category、LineMessage 等）已完成 ERD
+- [ ] 角色與權限矩陣（Admin / Dealer）確認，對應路由守衛策略
+- [ ] Docker Compose 初版架構（`backend`、`frontend`、`mongo`、`ollama` 服務）草稿完成
+- [ ] 技術選型決策紀錄（ADR）完成：JWT 演算法、密碼雜湊方案（bcrypt）、Vuetify 版本
 
 ---
 
@@ -305,11 +305,11 @@ gantt
 
 **查核項目**
 
-1. 所有 RESTful 端點清單（路徑、HTTP 方法、Request／Response DTO）已以文件或 Postman Collection 定義
-2. 身分認證端點（`POST /auth/login`、`POST /auth/register`、`POST /auth/reset-password`）規格凍結
-3. 訂單、產品、購物車、分類、報表等主要資源之端點規格凍結
-4. 錯誤碼與錯誤訊息格式（統一 JSON 結構）確認
-5. 前後端雙方確認契約無歧義，可分頭開發
+- [ ] 所有 RESTful 端點清單（路徑、HTTP 方法、Request／Response DTO）已以文件或 Postman Collection 定義
+- [ ] 身分認證端點（`POST /auth/login`、`POST /auth/register`、`POST /auth/reset-password`）規格凍結
+- [ ] 訂單、產品、購物車、分類、報表等主要資源之端點規格凍結
+- [ ] 錯誤碼與錯誤訊息格式（統一 JSON 結構）確認
+- [ ] 前後端雙方確認契約無歧義，可分頭開發
 
 ---
 
@@ -322,11 +322,11 @@ gantt
 
 **查核項目**
 
-1. JWT 簽發、驗證與 `authMiddleware` 完成：受保護路由拒絕無效 Token，有效 Token 附帶使用者識別（WBS 88.2.1.1）
-2. 登入／註冊／重設密碼 API 完成，密碼以 bcrypt 雜湊儲存，無明文入庫（WBS 88.2.1.1.1）
-3. 訂單、購物車、使用者資料 CRUD API 與 Mongoose 模型對齊（WBS 88.2.2）
-4. Postman / Thunder Client 手動測試清單全數通過
-5. MongoDB 主要集合在本機 `docker compose up` 後可自動建立，種子資料可注入
+- [ ] JWT 簽發、驗證與 `authMiddleware` 完成：受保護路由拒絕無效 Token，有效 Token 附帶使用者識別（WBS 88.2.1.1）
+- [ ] 登入／註冊／重設密碼 API 完成，密碼以 bcrypt 雜湊儲存，無明文入庫（WBS 88.2.1.1.1）
+- [ ] 訂單、購物車、使用者資料 CRUD API 與 Mongoose 模型對齊（WBS 88.2.2）
+- [ ] Postman / Thunder Client 手動測試清單全數通過
+- [ ] MongoDB 主要集合在本機 `docker compose up` 後可自動建立，種子資料可注入
 
 ---
 
@@ -339,11 +339,11 @@ gantt
 
 **查核項目**
 
-1. 季報文件產出：各 WBS 工作包實際進度 vs. 計畫進度（燃盡圖或進度百分比）
-2. 產品、分類、管理端與報表 API 開發進度確認（WBS 88.3）
-3. 前端共用元件、路由守衛與 Pinia 狀態管理實作進度確認（WBS 88.1.3）
-4. NLU／Ollama 健康檢查端點可呼叫，失敗不影響核心下單流程已驗證（WBS 88.3.3）
-5. 風險清單更新：識別當前阻礙項（Blocker），制定 Q4 因應策略
+- [ ] 季報文件產出：各 WBS 工作包實際進度 vs. 計畫進度（燃盡圖或進度百分比）
+- [ ] 產品、分類、管理端與報表 API 開發進度確認（WBS 88.3）
+- [ ] 前端共用元件、路由守衛與 Pinia 狀態管理實作進度確認（WBS 88.1.3）
+- [ ] NLU／Ollama 健康檢查端點可呼叫，失敗不影響核心下單流程已驗證（WBS 88.3.3）
+- [ ] 風險清單更新：識別當前阻礙項（Blocker），制定 Q4 因應策略
 
 ---
 
@@ -356,11 +356,11 @@ gantt
 
 **查核項目**
 
-1. 經銷商端主要使用者流程可於本機完成：登入 → 瀏覽產品 → 加入購物車 → 結帳 → 查詢訂單（WBS 88.1.1）
-2. 管理後台可完成 CRUD 與訂單狀態更新；圖表頁可載入後端報表資料（WBS 88.1.2）
-3. LINE Webhook 在測試環境可收發並記錄事件；Bot Token 由環境變數管理（WBS 88.3.2）
-4. 前後端整合冒煙測試（Smoke Test）通過：無 CORS 錯誤、API 回應格式與前端預期一致
-5. 路由守衛驗證：未登入使用者導向登入頁，Admin 路由拒絕 Dealer 角色
+- [ ] 經銷商端主要使用者流程可於本機完成：登入 → 瀏覽產品 → 加入購物車 → 結帳 → 查詢訂單（WBS 88.1.1）
+- [ ] 管理後台可完成 CRUD 與訂單狀態更新；圖表頁可載入後端報表資料（WBS 88.1.2）
+- [ ] LINE Webhook 在測試環境可收發並記錄事件；Bot Token 由環境變數管理（WBS 88.3.2）
+- [ ] 前後端整合冒煙測試（Smoke Test）通過：無 CORS 錯誤、API 回應格式與前端預期一致
+- [ ] 路由守衛驗證：未登入使用者導向登入頁，Admin 路由拒絕 Dealer 角色
 
 ---
 
@@ -373,11 +373,11 @@ gantt
 
 **查核項目**
 
-1. 年末季報產出：累計實際成本 vs. 預算（依 5.2.1 各工作包追蹤）
-2. 系統整合測試（Integration Test）啟動：所有主要 API 路徑於 Docker Compose 環境下通過
-3. 管理後台頁面（CRUD、報表）開發完成，版本合併至 `main`（WBS 88.1.2）
-4. 已知技術債清單建立，並排入 Q1 2026 Sprint Backlog
-5. `docker compose up` 可完整啟動前後端、MongoDB 及 Ollama 服務，埠號無衝突（WBS 88.4.1）
+- [ ] 年末季報產出：累計實際成本 vs. 預算（依 5.2.1 各工作包追蹤）
+- [ ] 系統整合測試（Integration Test）啟動：所有主要 API 路徑於 Docker Compose 環境下通過
+- [ ] 管理後台頁面（CRUD、報表）開發完成，版本合併至 `main`（WBS 88.1.2）
+- [ ] 已知技術債清單建立，並排入 Q1 2026 Sprint Backlog
+- [ ] `docker compose up` 可完整啟動前後端、MongoDB 及 Ollama 服務，埠號無衝突（WBS 88.4.1）
 
 ---
 
@@ -390,11 +390,11 @@ gantt
 
 **查核項目**
 
-1. Q1 季報產出：整合測試覆蓋率、缺陷密度與修復進度
-2. OWASP Top 10 自評清單完成：SQL Injection（NoSQL Injection）、XSS、未授權存取等主要風險確認已緩解
-3. JWT Secret、LINE Token、DB 連線字串等敏感資訊確認不存在版本庫，全部以環境變數注入
-4. API 回應效能基準測試：主要端點（產品列表、訂單查詢）P95 回應時間 < 500ms
-5. MongoDB 索引複審：高頻查詢欄位（productId、orderId、userId、createdAt）已建立索引
+- [ ] Q1 季報產出：整合測試覆蓋率、缺陷密度與修復進度
+- [ ] OWASP Top 10 自評清單完成：SQL Injection（NoSQL Injection）、XSS、未授權存取等主要風險確認已緩解
+- [ ] JWT Secret、LINE Token、DB 連線字串等敏感資訊確認不存在版本庫，全部以環境變數注入
+- [ ] API 回應效能基準測試：主要端點（產品列表、訂單查詢）P95 回應時間 < 500ms
+- [ ] MongoDB 索引複審：高頻查詢欄位（productId、orderId、userId、createdAt）已建立索引
 
 ---
 
@@ -407,11 +407,11 @@ gantt
 
 **查核項目**
 
-1. UAT 測試腳本（含 WBS 88.4.3 驗收清單）由利害關係人或代理測試者執行完畢
-2. 核心流程通過驗收：註冊登入 → 下單 → 管理後台變更訂單狀態 → 收到 LINE 通知
-3. 所有 P0（阻塞性）與 P1（高嚴重度）缺陷已修復並複驗通過
-4. 使用者介面一致性確認：版型、字型、色彩與 Vuetify 設計規範對齊（WBS 88.1.1 DOD）
-5. 上線前確認清單（Go-Live Checklist）草稿完成，待 CP-10 前簽核
+- [ ] UAT 測試腳本（含 WBS 88.4.3 驗收清單）由利害關係人或代理測試者執行完畢
+- [ ] 核心流程通過驗收：註冊登入 → 下單 → 管理後台變更訂單狀態 → 收到 LINE 通知
+- [ ] 所有 P0（阻塞性）與 P1（高嚴重度）缺陷已修復並複驗通過
+- [ ] 使用者介面一致性確認：版型、字型、色彩與 Vuetify 設計規範對齊（WBS 88.1.1 DOD）
+- [ ] 上線前確認清單（Go-Live Checklist）草稿完成，待 CP-10 前簽核
 
 ---
 
@@ -424,11 +424,11 @@ gantt
 
 **查核項目**
 
-1. 系統正式部署至生產環境，`docker compose up` 或等效部署方式驗證通過
-2. `.env.example` 與 README 建置步驟完整，新成員可依文件於 30 分鐘內完成本機建置（WBS 88.4.2 DOD）
-3. 最終版本已提交至版本庫，Tag 標記（`v1.0.0`）並附 Release Notes
-4. 專案結案報告產出：包含實際 vs. 計畫人力時間、成本差異、風險回顧與後續維運建議
-5. 所有 WBS 工作包之 DOD 完成清單已核簽，專案正式關閉
+- [ ] 系統正式部署至生產環境，`docker compose up` 或等效部署方式驗證通過
+- [ ] `.env.example` 與 README 建置步驟完整，新成員可依文件於 30 分鐘內完成本機建置（WBS 88.4.2 DOD）
+- [ ] 最終版本已提交至版本庫，Tag 標記（`v1.0.0`）並附 Release Notes
+- [ ] 專案結案報告產出：包含實際 vs. 計畫人力時間、成本差異、風險回顧與後續維運建議
+- [ ] 所有 WBS 工作包之 DOD 完成清單已核簽，專案正式關閉
 
 ---
 
