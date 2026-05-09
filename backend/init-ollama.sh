@@ -17,7 +17,7 @@ for i in {1..30}; do
 done
 
 # 獲取模型名稱
-MODEL=${OLLAMA_MODEL:-tinyllama:latest}
+MODEL=${OLLAMA_MODEL:-llama2:7b-chat-q4_0}
 echo "📦 準備下載模型: $MODEL"
 
 # 檢查模型是否已下載

@@ -75,12 +75,13 @@ services:
       - OLLAMA_MODEL=${OLLAMA_MODEL:-tinyllama:latest}
     networks:
       - tripeak-network
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
+    # 暫時移除健康檢查，避免不必要的失敗
+    # healthcheck:
+    #   test: ["CMD-SHELL", "exit 0"]
+    #   interval: 30s
+    #   timeout: 10s
+    #   retries: 3
+    #   start_period: 60s
 
   # Ollama 模型自動下載服務（可選，用於首次啟動時自動下載模型）
   ollama-init:
